@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PV-Speicher-Kalkulator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=Spline+Sans:wght@400;500;600&display=swap');
+  :root{
+    --paper:#F4EFE6; --ink:#1A1A17; --sub:#6B6458; --card:#FBF8F2;
+    --line:rgba(26,26,23,0.10); --sun:#E8A92F; --sunDeep:#C8791A;
+    --leaf:#2E7D5B; --sky:#3E6B8C; --clay:#B5543A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:'Spline Sans',ui-sans-serif,system-ui,sans-serif;}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 60px;}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;}
+  .disp{font-family:'Bricolage Grotesque',ui-sans-serif,sans-serif;letter-spacing:-0.02em;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;}
+  h1{font-size:38px;margin:4px 0 0;font-weight:800;line-height:1;}
+  .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--sunDeep);font-weight:700;}
+  .lede{color:var(--sub);margin:8px 0 0;font-size:14px;max-width:560px;}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:22px 0;}
+  .kpi{padding:14px 16px;}
+  .kpi .lab{font-size:11px;color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+  .kpi .val{font-size:28px;font-weight:800;line-height:1.1;margin-top:2px;}
+  .kpi .sb{font-size:11px;color:var(--sub);margin-top:2px;}
+  .kpi.has-tip{position:relative;}
+  .kpi-i{position:absolute;top:11px;right:13px;width:16px;height:16px;border-radius:50%;border:1.3px solid var(--sub);color:var(--sub);font-size:11px;font-weight:700;font-style:italic;font-family:Georgia,'Times New Roman',serif;display:flex;align-items:center;justify-content:center;cursor:help;}
+  .kpi.has-tip:hover .kpi-i,.kpi.has-tip:focus-within .kpi-i{border-color:var(--sky);color:var(--sky);}
+  .kpi-tip{position:absolute;top:calc(100% + 8px);right:0;width:300px;max-width:84vw;background:var(--ink);color:#F4EFE6;border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.5;box-shadow:0 10px 28px rgba(0,0,0,.24);opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s ease,transform .15s ease;z-index:50;pointer-events:none;}
+  .kpi.has-tip:hover .kpi-tip,.kpi.has-tip:focus-within .kpi-tip{opacity:1;visibility:visible;transform:translateY(0);}
+  .info-wrap{position:relative;cursor:help;white-space:nowrap;}
+  .info-i{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;margin-left:3px;border-radius:50%;border:1.1px solid var(--sub);color:var(--sub);font-size:9px;font-weight:700;font-style:italic;font-family:Georgia,'Times New Roman',serif;vertical-align:middle;line-height:1;}
+  .info-wrap:hover .info-i,.info-wrap:focus-within .info-i{border-color:var(--sky);color:var(--sky);}
+  .info-tip{position:absolute;bottom:calc(100% + 8px);left:0;width:320px;max-width:84vw;white-space:normal;background:var(--ink);color:#F4EFE6;border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.5;box-shadow:0 10px 28px rgba(0,0,0,.24);opacity:0;visibility:hidden;transform:translateY(4px);transition:opacity .15s ease,transform .15s ease;z-index:50;pointer-events:none;}
+  .info-wrap:hover .info-tip,.info-wrap:focus-within .info-tip{opacity:1;visibility:visible;transform:translateY(0);}
+  .kpi-tip .tip-title,.info-tip .tip-title{font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;color:var(--sun);}
+  .kpi-tip .tip-row,.info-tip .tip-row{display:flex;justify-content:space-between;gap:14px;padding:3px 0;}
+  .kpi-tip .tip-row span,.info-tip .tip-row span{color:#D8D2C6;}
+  .kpi-tip .tip-row b,.info-tip .tip-row b{font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
+  .kpi-tip .tip-sum,.info-tip .tip-sum{border-top:1px solid rgba(244,239,230,.25);margin-top:5px;padding-top:6px;}
+  .kpi-tip .tip-sum span,.kpi-tip .tip-sum b,.info-tip .tip-sum span,.info-tip .tip-sum b{color:#fff;font-weight:700;}
+  .kpi-tip .tip-note,.info-tip .tip-note{margin-top:8px;padding-top:7px;border-top:1px solid rgba(244,239,230,.18);font-size:11px;line-height:1.45;color:#C2BCB0;}
+  .info-tip .tip-sep{height:1px;background:rgba(244,239,230,.18);margin:6px 0;}
+  .main{display:grid;grid-template-columns:minmax(280px,340px) 1fr;gap:18px;align-items:start;}
+  @media(max-width:820px){.main{grid-template-columns:1fr;} .twocol{grid-template-columns:1fr!important;}}
+  .pad{padding:18px;}
+  .sect{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+    margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+  .sect:first-child{margin-top:0;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .field label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px;font-weight:500;}
+  .field input,.field select{width:100%;font-family:'IBM Plex Mono',monospace;font-size:14px;
+    padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);outline:none;transition:border-color .15s;}
+  .field input:focus,.field select:focus{border-color:var(--sun);}
+  .note{font-size:11.5px;color:var(--sub);margin-top:8px;line-height:1.45;}
+  .seg{display:inline-flex;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;}
+  .seg button{border:0;background:transparent;padding:6px 14px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;color:var(--sub);}
+  .seg button.on{background:var(--ink);color:var(--paper);}
+  .results{display:grid;gap:18px;}
+  .recommend{display:flex;gap:18px;align-items:center;flex-wrap:wrap;background:linear-gradient(135deg,#FBF8F2,#F6EEDD);}
+  .recommend .big{font-size:42px;font-weight:800;color:var(--sunDeep);line-height:1;}
+  .chartT{font-size:16px;font-weight:700;margin-bottom:4px;}
+  .chartSub{font-size:13px;color:var(--sub);margin:0 0 10px;}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .footnote{font-size:12px;color:var(--sub);margin-top:22px;line-height:1.5;}
+  svg text{font-family:'IBM Plex Mono',monospace;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-top:6px;}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle;}
+  .tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--line);}
+  .tabs button{border:0;background:transparent;padding:10px 16px;cursor:pointer;font-size:14px;font-weight:600;color:var(--sub);border-bottom:2px solid transparent;margin-bottom:-1px;}
+  .tabs button.on{color:var(--ink);border-bottom-color:var(--sun);}
+  .panel[hidden]{display:none;}
+  .costrow{display:flex;gap:10px;align-items:center;margin-bottom:8px;}
+  .costrow input{font-family:'IBM Plex Mono',monospace;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);outline:none;}
+  .costrow input:focus{border-color:var(--sun);}
+  .costrow input.desc{flex:1;}
+  .costrow input.amt{width:130px;text-align:right;}
+  .costrow .rm{width:34px;height:34px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;color:var(--clay);font-size:18px;line-height:1;flex:none;}
+  .costrow .rm:hover{background:#fbeae6;}
+  .addbtn{margin-top:6px;border:1px dashed var(--line);background:transparent;color:var(--sub);padding:9px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;}
+  .addbtn:hover{border-color:var(--sun);color:var(--sunDeep);}
+  .costsum{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:15px;line-height:1.7;}
+  .costsum b{font-size:22px;}
+  .stringcard{border:1px solid var(--line);border-radius:10px;padding:10px 11px;margin-bottom:8px;background:#fff;}
+  .stringhdr{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;color:var(--sub);margin-bottom:8px;}
+  .stringhdr .del{cursor:pointer;color:var(--clay);font-size:17px;line-height:1;padding:0 4px;}
+  .g3{display:grid;grid-template-columns:0.75fr 1.5fr 0.8fr;gap:8px;align-items:end;}
+  .g3 .field input,.g3 .field select{padding:6px 8px;font-size:13px;}
+  .g3 .field select{-webkit-appearance:none;-moz-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236B6458' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 8px center;background-size:10px 6px;padding-right:26px;}
+  .g3 .field label{white-space:nowrap;}
+  .az-link{display:inline-block;margin-top:5px;font-size:11px;color:var(--sky);text-decoration:none;font-family:'Spline Sans',sans-serif;border-bottom:1px dotted var(--sky);line-height:1.3;}
+  .az-link:hover{color:var(--ink);border-bottom-color:var(--ink);}
+  .modal{position:fixed;inset:0;background:rgba(26,26,23,0.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:24px;}
+  .modal[hidden]{display:none;}
+  .modalBox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;width:min(960px,96vw);max-height:92vh;overflow:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.28);}
+  .modalTitle{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:20px;margin-bottom:12px;}
+  .modalClose{position:absolute;top:12px;right:14px;border:1px solid var(--line);background:#fff;border-radius:8px;width:32px;height:32px;font-size:18px;cursor:pointer;color:var(--ink);line-height:1;}
+  #modalBody svg{width:100%;height:auto;}
+  .zoomable{cursor:zoom-in;}
+  .navbtn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 16px;border-radius:9px;cursor:pointer;font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:border-color .15s,color .15s;}
+  .navbtn:hover{border-color:var(--sun);color:var(--sunDeep);}
+  .navbtn.accent{background:var(--sun);border-color:var(--sun);color:#1A1A17;}
+  .navbtn.accent:hover{background:var(--sunDeep);border-color:var(--sunDeep);color:#fff;}
+  .drop{position:fixed;inset:0;background:rgba(232,169,47,0.12);border:3px dashed var(--sun);display:flex;align-items:center;justify-content:center;z-index:60;pointer-events:none;}
+  .drop[hidden]{display:none;}
+  #seasonSel button{font-size:11px;padding:5px 9px;}
+  .drop span{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 22px;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:18px;color:var(--sunDeep);box-shadow:0 12px 40px rgba(0,0,0,.18);}
+  .toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .toggle-row>label:not(.toggle){font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;flex:1;}
+  .toggle{position:relative;width:36px;height:20px;flex:none!important;}
+  .toggle input{opacity:0;width:0;height:0;}
+  .toggle .slider{position:absolute;inset:0;background:var(--line);border-radius:20px;transition:.2s;cursor:pointer;}
+  .toggle .slider:before{content:"";position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;}
+  .toggle input:checked+.slider{background:var(--sun);}
+  .toggle input:checked+.slider:before{transform:translateX(16px);}
+  .collapsible{display:none;}.collapsible.open{display:block;}
+  .badge{font-size:10px;font-weight:700;letter-spacing:.04em;background:var(--sun);color:#1A1A17;border-radius:4px;padding:2px 6px;vertical-align:middle;}
+  .badge-warn{background:var(--clay);color:#fff;}
+  .adv-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:10px 0 6px;border-top:1px solid var(--line);margin-top:16px;}
+  .adv-toggle .adv-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);}
+  .adv-toggle .adv-arrow{font-size:11px;color:var(--sub);transition:transform .2s;}
+  .adv-toggle.open .adv-arrow{transform:rotate(180deg);}
+  .adv-body{display:none;padding-bottom:4px;}
+  .adv-body.open{display:block;}
+  .sect-box{border-radius:10px;padding:12px 14px;margin-top:16px;border-left:3px solid transparent;}
+  .sect-box-sky{background:rgba(62,107,140,0.06);border-left-color:var(--sky);}
+  .sect-box-leaf{background:rgba(46,125,91,0.06);border-left-color:var(--leaf);}
+  .sect-box-sun{background:rgba(232,169,47,0.07);border-left-color:var(--sun);}
+  .sect-box-clay{background:rgba(181,84,58,0.06);border-left-color:var(--clay);}
+  .sect-box-ink{background:rgba(26,26,23,0.04);border-left-color:var(--ink);}
+  .sect-box .sect{margin-top:0;border-bottom-color:rgba(26,26,23,0.07);}
+  .sect-box-sun .sect{border-bottom-color:rgba(232,169,47,0.2);}
+  .sect-box-clay .sect{border-bottom-color:rgba(181,84,58,0.15);}
+  .sect-box-leaf .sect{border-bottom-color:rgba(46,125,91,0.15);}
+  .sect-box-sky .sect{border-bottom-color:rgba(62,107,140,0.15);}
+  .sect-box-ink .sect{border-bottom-color:rgba(26,26,23,0.12);}
+  .hpc-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;}
+  .hpc-row b{font-size:16px;}
+  .hpc-diff{border-bottom:none;padding-top:12px;font-weight:600;}
+  .hpc-diff span{font-weight:700;}
+  .hpc-note{font-size:11.5px;color:var(--sub);margin-top:10px;line-height:1.5;padding-top:10px;border-top:1px solid var(--line);}
+  .ref-line-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--sub);margin-top:6px;}
+  /* ---- Einspeise-Leiste ---- */
+  .feed-strip{display:flex;align-items:center;background:var(--card);border:1.5px solid var(--sun);border-radius:10px;overflow:hidden;height:38px;margin-bottom:12px;}
+  .feed-pill{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;background:var(--sun);color:#5a3800;padding:0 11px;min-width:124px;align-self:stretch;display:flex;align-items:center;justify-content:center;white-space:nowrap;flex:none;}
+  .feed-items{display:flex;flex:1;height:100%;}
+  .feed-item{display:flex;align-items:center;gap:10px;padding:0 16px;flex:1;}
+  .feed-item+.feed-item{border-left:1px solid var(--line);}
+  .fi-lab{font-size:11px;color:var(--sub);white-space:nowrap;}
+  .fi-val{font-size:15px;font-weight:700;color:var(--sunDeep);white-space:nowrap;font-family:'IBM Plex Mono',monospace;}
+  .fi-div{width:1px;height:18px;background:var(--line);flex:none;}
+  .fi-sub{font-size:11px;color:var(--sub);white-space:nowrap;}
+  .feed-strip.eigen{border-color:var(--leaf);}
+  .feed-strip.eigen .feed-pill{background:var(--leaf);color:#fff;}
+  .feed-strip.eigen .fi-val{color:var(--leaf);}
+  /* ---- Print / PDF ---- */
+  #printView{display:none;}
+  @media print{
+    @page{margin:8mm 10mm 8mm 10mm;size:A4 portrait;}
+    html,body{background:#F4EFE6!important;color:#1A1A17!important;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .wrap>*:not(#printView){display:none!important;}
+    .drop,.modal{display:none!important;}
+    #printView{display:block!important;font-family:'Spline Sans',ui-sans-serif,system-ui,sans-serif;font-size:9px;line-height:1.35;}
+    .no-break{break-inside:avoid;}
+    /* header */
+    .p-head{display:flex;align-items:center;gap:6px;padding-bottom:3px;border-bottom:2px solid #E8A92F;margin-bottom:4px;}
+    .p-head svg{width:15px!important;height:15px!important;flex:none;}
+    .p-eyebrow{font-size:6.5px;letter-spacing:.16em;text-transform:uppercase;color:#C8791A;font-weight:700;}
+    .p-title{font-family:'Bricolage Grotesque',sans-serif;font-size:13px;font-weight:800;letter-spacing:-0.02em;line-height:1;}
+    /* cards */
+    .p-card{background:#FBF8F2;border:1px solid rgba(26,26,23,0.12);border-radius:6px;padding:5px 8px;break-inside:avoid;}
+    /* KPIs */
+    .p-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:5px;}
+    .p-kpi{background:#FBF8F2;border:1px solid rgba(26,26,23,0.12);border-radius:6px;padding:4px 6px;}
+    .p-kpi .lab{font-size:6.5px;text-transform:uppercase;letter-spacing:.05em;color:#6B6458;font-weight:700;}
+    .p-kpi .val{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;line-height:1.05;margin-top:1px;}
+    .p-kpi .sb{font-size:6.5px;color:#6B6458;margin-top:1px;}
+    /* rec */
+    .p-rec-label{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6B6458;}
+    .p-rec-val{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:#C8791A;line-height:1;white-space:nowrap;}
+    .p-rec-sub{font-size:7.5px;color:#6B6458;}
+    /* full-width block */
+    .p-row-full{display:block;width:100%;}
+    /* 2-col: params left + amort right */
+    .p-row2{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px;}
+    /* param tables */
+    .p-sect{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6B6458;margin:0 0 3px;padding-bottom:2px;border-bottom:1px solid rgba(26,26,23,0.10);}
+    .p-row{display:flex;justify-content:space-between;gap:4px;font-size:8px;line-height:1.6;color:#1A1A17;}
+    .p-row span:last-child{font-family:'IBM Plex Mono',monospace;font-weight:600;white-space:nowrap;}
+    /* charts */
+    .p-chart2{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+    .p-chartT{font-family:'Bricolage Grotesque',sans-serif;font-size:9.5px;font-weight:700;margin-bottom:1px;color:#1A1A17;}
+    .p-legend{display:flex;gap:8px;font-size:7px;color:#6B6458;margin-top:2px;flex-wrap:wrap;}
+    .p-legend i{display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:2px;vertical-align:middle;}
+    .p-foot{font-size:7px;color:#999;margin-top:5px;line-height:1.4;}
+    svg{width:100%!important;height:auto!important;display:block;}
+    /* print feed strip */
+    .p-feed-strip{display:flex;align-items:center;border:1px solid #E8A92F;border-radius:4px;overflow:hidden;height:20px;margin-bottom:4px;}
+    .p-feed-pill{font-size:7px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;background:#E8A92F;color:#5a3800;padding:0 6px;min-width:92px;align-self:stretch;display:flex;align-items:center;justify-content:center;white-space:nowrap;flex:none;}
+    .p-feed-items{display:flex;flex:1;height:100%;}
+    .p-feed-item{display:flex;align-items:center;gap:5px;padding:0 8px;flex:1;}
+    .p-feed-item+.p-feed-item{border-left:0.5px solid rgba(26,26,23,0.12);}
+    .p-fi-lab{font-size:6.5px;color:#6B6458;white-space:nowrap;}
+    .p-fi-val{font-size:9px;font-weight:700;color:#C8791A;white-space:nowrap;font-family:'IBM Plex Mono',monospace;}
+    .p-fi-div{width:0.5px;height:11px;background:rgba(26,26,23,0.15);flex:none;}
+    .p-fi-sub{font-size:6.5px;color:#6B6458;white-space:nowrap;}
+    .p-feed-strip.eigen{border-color:#2E7D5B;}
+    .p-feed-strip.eigen .p-feed-pill{background:#2E7D5B;color:#fff;}
+    .p-feed-strip.eigen .p-fi-val{color:#2E7D5B;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <svg width="50" height="50" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-label="Logo" style="flex:none;">
+        <g stroke="#C8791A" stroke-width="2.6" stroke-linecap="round">
+          <line x1="24" y1="12" x2="24" y2="7"/>
+          <line x1="24" y1="36" x2="24" y2="41"/>
+          <line x1="12" y1="24" x2="7" y2="24"/>
+          <line x1="36" y1="24" x2="41" y2="24"/>
+          <line x1="15.5" y1="15.5" x2="12" y2="12"/>
+          <line x1="32.5" y1="32.5" x2="36" y2="36"/>
+          <line x1="15.5" y1="32.5" x2="12" y2="36"/>
+          <line x1="32.5" y1="15.5" x2="36" y2="12"/>
+        </g>
+        <circle cx="24" cy="24" r="9.5" fill="#E8A92F"/>
+        <circle cx="24" cy="24" r="9.5" fill="none" stroke="#E8A92F" stroke-width="1"/>
+      </svg>
+      <div>
+        <div class="eyebrow">Photovoltaik · Wirtschaftlichkeit</div>
+        <h1 class="disp">PV Rechner</h1>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button id="pdfBtn" class="navbtn accent" style="padding:8px 14px;font-size:13px;" title="Als PDF drucken / exportieren">⬇ PDF</button>
+      <button id="saveBtn" class="navbtn" style="padding:8px 14px;font-size:13px;" title="Eingaben als Datei speichern">Speichern</button>
+      <button id="loadBtn" class="navbtn" style="padding:8px 14px;font-size:13px;" title="Eingaben aus Datei laden">Laden</button>
+      <input type="file" id="loadFile" accept="application/json,.json" style="display:none">
+    </div>
+  </div>
+
+  <div class="panel" id="panel-calc">
+  <div class="kpis" id="kpis"></div>
+
+  <!-- Eigenverbrauchs-Leiste -->
+  <div class="feed-strip eigen" id="selfStrip">
+    <div class="feed-pill">Eigenverbrauch</div>
+    <div class="feed-items">
+      <div class="feed-item">
+        <div><div class="fi-lab">Eigenverbrauch / Jahr</div><div class="fi-val" id="selfKwh">– kWh</div></div>
+        <div class="fi-div"></div>
+        <div class="fi-sub" id="selfPct">–</div>
+      </div>
+      <div class="feed-item">
+        <div><div class="fi-lab">Ersparnis Jahr 1</div><div class="fi-val" id="selfEur">– €</div></div>
+        <div class="fi-div"></div>
+        <div class="fi-sub" id="selfSub">–</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Einspeise-Leiste -->
+  <div class="feed-strip" id="feedStrip">
+    <div class="feed-pill">Einspeisung</div>
+    <div class="feed-items">
+      <div class="feed-item">
+        <div><div class="fi-lab">Eingespeist / Jahr</div><div class="fi-val" id="feedKwh">– kWh</div></div>
+        <div class="fi-div"></div>
+        <div class="fi-sub" id="feedKwhPct">–</div>
+      </div>
+      <div class="feed-item">
+        <div><div class="fi-lab">Vergütung Jahr 1</div><div class="fi-val" id="feedEur">– €</div></div>
+        <div class="fi-div"></div>
+        <div class="fi-sub" id="feedEurSub">–</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Eingaben -->
+    <div class="card pad">
+      <div class="sect-box sect-box-sun" style="margin-top:0;">
+        <div class="sect">Anlage &amp; Standort</div>
+        <div class="g2">
+          <div class="field"><label>PLZ (optional)</label><input id="plz" type="text" inputmode="numeric" maxlength="5" placeholder="z.B. 20095"></div>
+          <div class="field"><label>Region</label><select id="region"><option selected>Nord</option><option>Mitte</option><option>Süd</option></select></div>
+          <div class="field"><label>Modulleistung (Wp)</label><input id="moduleWp" type="number" value="465"></div>
+          <div class="field"><label>Anzahl Strings</label><input id="stringCount" type="number" min="1" value="1"></div>
+        </div>
+        <div class="note" id="plzNote"></div>
+        <div id="stringList"></div>
+        <div class="note" id="yieldNote"></div>
+        <a class="az-link" style="margin-top:8px" href="https://azimut.polka-umwelt.de/" target="_blank" rel="noopener noreferrer" title="Azimut-Tool von Polka Umwelt in neuem Tab öffnen">↗ Azimutwinkel bestimmen (Polka Umwelt)</a>
+      </div>
+
+      <div class="sect-box sect-box-clay">
+        <div class="sect">Verbrauch &amp; Tarif</div>
+        <div class="g2">
+          <div class="field"><label>Jahresverbrauch (kWh)</label><input id="annualConsumption" type="number" value="3200"></div>
+          <div class="field"><label>Strompreis (€/kWh)</label><input id="gridPrice" type="number" step="0.01" value="0.33"></div>
+          <div class="field"><label>Einspeisung (€/kWh)</label><input id="feedInTariff" type="number" step="0.001" value="0.07"></div>
+          <div class="field"><label>Strompreis +%/Jahr</label><input id="priceInc" type="number" step="0.1" value="3.0"></div>
+        </div>
+        <div class="note">Einspeisevergütung ist gesetzlich geregelt und ändert sich – Wert vor Entscheidung prüfen.</div>
+      </div>
+
+      <div class="sect-box sect-box-leaf">
+        <div class="sect">Kosten &amp; Förderung</div>
+        <div class="g2">
+          <div class="field"><label>Anlage (€/kWp)</label><input id="costPerKwp" type="number" value="1000"></div>
+          <div class="field"><label>Speicher (€/kWh)</label><input id="batteryCostPerKwh" type="number" value="220"></div>
+          <div class="field"><label>Förderung (€)</label><input id="foerderung" type="number" value="0"></div>
+          <div class="field"><label>CO₂-Faktor (g/kWh)</label><input id="co2Factor" type="number" value="0"></div>
+        </div>
+        <button id="openCosts" class="navbtn accent" style="margin-top:12px;width:100%;justify-content:center;">Kostenaufstellung</button>
+      </div>
+
+      <div class="sect-box sect-box-sky">
+        <div class="sect">Wärmepumpe <span class="badge" id="hpBadge" style="display:none">aktiv</span></div>
+        <div class="toggle-row">
+          <label for="hpToggle">Wärmepumpe einbeziehen</label>
+          <label class="toggle"><input type="checkbox" id="hpToggle"><span class="slider"></span></label>
+        </div>
+        <div class="collapsible" id="hpSection">
+          <div class="g2">
+            <div class="field"><label>Heizwärmebedarf (kWh/a)</label><input id="hpHeat" type="number" value="12000" placeholder="z.B. 12000"></div>
+            <div class="field"><label>COP (Jahresarbeitszahl)</label><input id="hpCop" type="number" step="0.1" value="3.5" placeholder="z.B. 3.5"></div>
+          </div>
+          <div class="note" id="hpNote"></div>
+          <div class="toggle-row" style="margin-top:12px;">
+            <label for="hpReplaceToggle">WP ersetzt bisherige Heizung (Heizkosten-Vergleich)</label>
+            <label class="toggle"><input type="checkbox" id="hpReplaceToggle"><span class="slider"></span></label>
+          </div>
+          <div class="collapsible" id="hpCompareSection">
+            <div class="g2">
+              <div class="field"><label>Bisheriger Energieträger</label>
+                <select id="hpOldFuel">
+                  <option value="gas">Erdgas</option>
+                  <option value="oel">Heizöl</option>
+                  <option value="pellets">Pellets</option>
+                  <option value="fern">Fernwärme</option>
+                  <option value="strom">Strom-Direktheizung</option>
+                </select>
+              </div>
+              <div class="field"><label>Preis (€/kWh Brennstoff)</label><input id="hpOldPrice" type="number" step="0.005" value="0.11"></div>
+            </div>
+            <div class="g2">
+              <div class="field"><label>Verbrauch letztes Jahr (kWh/a)</label><input id="hpOldUse" type="number" step="100" value="13000" placeholder="Gas-/Ölzähler"></div>
+              <div></div>
+            </div>
+            <div class="note" id="hpOldNote">Gemessener Brennstoffverbrauch laut Zähler/Rechnung – enthält die Kesselverluste bereits, daher kein Wirkungsgrad nötig. (Heizöl: ca. 10 kWh je Liter.)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sect-box sect-box-leaf">
+        <div class="sect">E-Auto / Wallbox <span class="badge" id="evBadge" style="display:none">aktiv</span></div>
+        <div class="toggle-row">
+          <label for="evToggle">E-Auto-Laden einbeziehen</label>
+          <label class="toggle"><input type="checkbox" id="evToggle"><span class="slider"></span></label>
+        </div>
+        <div class="collapsible" id="evSection">
+          <div style="display:grid;gap:10px;">
+            <div class="g2">
+              <div class="field"><label>Jahresstrom E-Auto (kWh)</label><input id="evKwh" type="number" value="2500" placeholder="z.B. 2500"></div>
+            </div>
+            <div class="field"><label>Ladestrategie</label>
+              <select id="evStrategy">
+                <option value="solar">Überschuss (tagsüber)</option>
+                <option value="night">Nacht (22–6 Uhr)</option>
+                <option value="mixed">Gemischt (50/50)</option>
+              </select>
+            </div>
+          </div>
+          <div class="note">Überschussladen erhöht Eigenverbrauch erheblich. Nachtladen belastet das Netz, verbessert aber Autarkie kaum.</div>
+        </div>
+      </div>
+
+      <div class="sect-box sect-box-sky">
+        <div class="sect">Zeiträume</div>
+        <div class="g2">
+          <div class="field"><label>Betrachtungszeitraum (J.)</label><input id="period" type="number" value="25"></div>
+          <div class="field"><label>EEG-Vergütungsdauer (J.)</label><input id="eegDuration" type="number" value="20"></div>
+          <div class="field"><label>Reststrom n. EEG (€/kWh)</label><input id="restWert" type="number" step="0.01" value="0.03"></div>
+        </div>
+        <div class="note">Standard 20 J. = EEG-Vergütungsdauer. Rechnest du länger, werden Jahre nach EEG-Ende mit dem niedrigeren Reststrom-Wert vergütet.</div>
+      </div>
+
+      <!-- Erweiterte Einstellungen -->
+      <div class="sect-box sect-box-ink" style="padding:0;">
+        <div class="adv-toggle" id="advToggle" style="padding:12px 14px;margin:0;border-top:none;">
+          <span class="adv-label">Erweiterte Einstellungen <span class="badge badge-warn" id="advWarnBadge" style="display:none">!</span></span>
+          <span class="adv-arrow">▼</span>
+        </div>
+        <div class="adv-body" id="advBody" style="padding:0 14px 12px;">
+          <div class="g2" style="margin-top:10px;align-items:end;">
+            <div class="field"><label>PV-Degradation (%/Jahr)</label><input id="degradation" type="number" step="0.1" value="0.5"></div>
+            <div class="field"><label>Speicher-Degradation (%/Jahr)</label><input id="batDegradation" type="number" step="0.1" value="2.0"></div>
+            <div class="field"><label>WR-Wirkungsgrad (%)</label><input id="inverterEff" type="number" step="0.1" value="97"></div>
+            <div class="field"><label>Betriebskosten (€/Jahr)</label><input id="opCost" type="number" step="10" value="150"></div>
+          </div>
+          <div class="toggle-row" style="margin-top:10px;">
+            <label for="limit70Toggle">70%-Einspeisebegrenzung (§9 EEG)</label>
+            <label class="toggle"><input type="checkbox" id="limit70Toggle"><span class="slider"></span></label>
+          </div>
+          <div class="curtail-note" id="curtailNote"></div>
+          <div class="note" style="margin-top:6px;">Gilt für Anlagen &gt;7 kWp ohne Smart Meter. Abgeregelte Energie geht verloren – reduziert Einspeisung und Ertrag.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auswertung -->
+    <div class="results">
+      <div class="card pad recommend">
+        <div style="flex:1 1 240px;">
+          <div style="font-size:12px;color:var(--sub);font-weight:600;">Empfohlene Speichergröße</div>
+          <div class="disp big" id="recVal">– kWh</div>
+          <div style="font-size:13px;color:var(--sub);margin-top:6px;" id="recText"></div>
+        </div>
+        <div class="seg" id="batterySel"></div>
+      </div>
+
+      <div class="card pad">
+        <div class="disp chartT">Speichergröße im Vergleich</div>
+        <p class="chartSub">Autarkie steigt mit der Größe – die Amortisation auch. Der gelbe Balken ist die gewählte Größe.</p>
+        <div id="sweepChart"></div>
+        <div class="legend"><span><i style="background:var(--leaf)"></i>Autarkie %</span><span><i style="background:var(--clay)"></i>Amortisation (Jahre)</span></div>
+      </div>
+
+      <div class="card pad">
+        <div class="disp chartT" id="amortTitle">Amortisation</div>
+        <div id="amortChart"></div>
+        <div class="legend" id="amortStats"></div>
+      </div>
+
+      <div class="card pad" id="hpCompareCard" style="display:none;">
+        <div class="disp chartT">Heizkosten-Vergleich: Wärmepumpe vs. bisherige Heizung</div>
+        <p class="chartSub">Reiner Energiekosten-Vergleich der Heizung – getrennt von der PV-Amortisation.</p>
+        <div id="hpCompareBody"></div>
+      </div>
+
+      <div class="twocol">
+        <div class="card pad">
+          <div class="disp chartT">Erzeugung vs. Verbrauch</div>
+          <div id="monthlyChart"></div>
+          <div class="legend"><span><i style="background:var(--sun)"></i>Erzeugung</span><span><i style="background:var(--sky)"></i>Verbrauch</span></div>
+        </div>
+        <div class="card pad">
+          <div class="disp chartT" id="dayTitle">Sommertag · Speicherverlauf</div>
+          <div class="seg" id="seasonSel" style="margin:2px 0 10px;flex-wrap:wrap;">
+            <button data-season="Frühling">Frühling</button>
+            <button data-season="Sommer" class="on">Sommer</button>
+            <button data-season="Herbst">Herbst</button>
+            <button data-season="Winter">Winter</button>
+          </div>
+          <div id="dayChart"></div>
+          <div class="legend"><span><i style="background:var(--sun)"></i>Erzeugung</span><span><i style="background:var(--sky)"></i>Verbrauch</span><span><i style="background:var(--leaf)"></i>Ladezustand</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footnote">
+    Schätzwerte auf Basis genormter Profile (BDEW-H0-ähnlich, Regionalerträge). Gut für die Entscheidung „Speicher ja/nein und wie groß", keine exakte Anlagenplanung.
+    Modellierte Verluste: WR-Wirkungsgrad, PV-Degradation, Speicher-Degradation (gewählte Größe), §9-EEG-Abregelung. Nicht modelliert: Verschattung, Leitungsverluste, temperaturabhängige Leistungsänderung.
+  </p>
+  </div><!-- /panel-calc -->
+
+  <div class="panel" id="panel-costs" hidden>
+    <button id="backCalc" class="navbtn" style="margin-bottom:16px;">← Zurück zum Rechner</button>
+    <div class="card pad" style="max-width:700px;">
+      <div class="disp chartT">Kostenaufstellung – Errichtung &amp; Inbetriebnahme</div>
+      <p class="chartSub">Trage alle Einzelposten ein. Die Summe wird durch die Anlagenleistung (kWp) geteilt und automatisch als „Anlage (€/kWp)" im Kalkulator übernommen.</p>
+      <div id="costList"></div>
+      <button id="addCost" class="addbtn">+ Position hinzufügen</button>
+      <div class="costsum" id="costSum"></div>
+    </div>
+
+    <div class="card pad" style="max-width:700px;margin-top:18px;">
+      <div class="disp chartT">Batteriespeicher</div>
+      <p class="chartSub">Getrennt von der Anlagen-Aufstellung. Preis ÷ Kapazität wird automatisch als „Speicher (€/kWh)" im Kalkulator übernommen.</p>
+      <div class="g2" style="max-width:430px;">
+        <div class="field"><label>Speicherkapazität (kWh)</label><input id="batCap" type="number" step="0.1" placeholder="z. B. 8"></div>
+        <div class="field"><label>Preis gesamt (€)</label><input id="batPrice" type="number" placeholder="z. B. 6400"></div>
+      </div>
+      <div class="costsum" id="batSum"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PRINT VIEW ===================== -->
+<div id="printView">
+
+  <!-- 1. Header – eine Zeile -->
+  <div class="p-head">
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:15px;height:15px;flex:none">
+      <g stroke="#C8791A" stroke-width="2.6" stroke-linecap="round">
+        <line x1="24" y1="12" x2="24" y2="7"/><line x1="24" y1="36" x2="24" y2="41"/>
+        <line x1="12" y1="24" x2="7" y2="24"/><line x1="36" y1="24" x2="41" y2="24"/>
+        <line x1="15.5" y1="15.5" x2="12" y2="12"/><line x1="32.5" y1="32.5" x2="36" y2="36"/>
+        <line x1="15.5" y1="32.5" x2="12" y2="36"/><line x1="32.5" y1="15.5" x2="36" y2="12"/>
+      </g>
+      <circle cx="24" cy="24" r="9.5" fill="#E8A92F"/>
+    </svg>
+    <div style="display:flex;align-items:baseline;gap:7px;">
+      <div class="p-eyebrow">Photovoltaik · Wirtschaftlichkeit</div>
+      <div class="p-title">PV Rechner – Auswertung</div>
+    </div>
+    <div style="margin-left:auto;font-size:7px;color:#999;" id="printDate"></div>
+  </div>
+
+  <!-- 2. KPIs -->
+  <div class="p-kpis" id="printKpis"></div>
+
+  <!-- 2b. Eigenverbrauchs-Leiste -->
+  <div class="p-feed-strip eigen" id="printSelfStrip">
+    <div class="p-feed-pill">Eigenverbrauch</div>
+    <div class="p-feed-items">
+      <div class="p-feed-item">
+        <div style="display:flex;flex-direction:column;gap:0">
+          <span class="p-fi-lab">Eigenverbrauch / Jahr</span>
+          <span class="p-fi-val" id="printSelfKwh">–</span>
+        </div>
+        <div class="p-fi-div"></div>
+        <span class="p-fi-sub" id="printSelfPct">–</span>
+      </div>
+      <div class="p-feed-item">
+        <div style="display:flex;flex-direction:column;gap:0">
+          <span class="p-fi-lab">Ersparnis Jahr 1</span>
+          <span class="p-fi-val" id="printSelfEur">–</span>
+        </div>
+        <div class="p-fi-div"></div>
+        <span class="p-fi-sub" id="printSelfEurSub">–</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2c. Einspeise-Leiste -->
+  <div class="p-feed-strip" id="printFeedStrip">
+    <div class="p-feed-pill">Einspeisung</div>
+    <div class="p-feed-items">
+      <div class="p-feed-item">
+        <div style="display:flex;flex-direction:column;gap:0">
+          <span class="p-fi-lab">Eingespeist / Jahr</span>
+          <span class="p-fi-val" id="printFeedKwh">–</span>
+        </div>
+        <div class="p-fi-div"></div>
+        <span class="p-fi-sub" id="printFeedKwhPct">–</span>
+      </div>
+      <div class="p-feed-item">
+        <div style="display:flex;flex-direction:column;gap:0">
+          <span class="p-fi-lab">Vergütung Jahr 1</span>
+          <span class="p-fi-val" id="printFeedEur">–</span>
+        </div>
+        <div class="p-fi-div"></div>
+        <span class="p-fi-sub" id="printFeedEurSub">–</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Empfehlung + Sweep volle Breite (100px) -->
+  <div class="p-row-full p-card no-break" style="margin-bottom:4px;padding:4px 8px;">
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:2px;">
+      <div>
+        <div class="p-rec-label">Empfohlene Speichergröße</div>
+        <div class="p-rec-val" id="printRecVal">—</div>
+      </div>
+      <div style="border-left:1px solid rgba(26,26,23,0.12);padding-left:10px;">
+        <div class="p-rec-sub" id="printRecText"></div>
+        <div style="font-size:7px;color:#6B6458;" id="printRecBat"></div>
+      </div>
+    </div>
+    <div id="printSweep"></div>
+    <div class="p-legend"><span><i style="background:#2E7D5B"></i>Autarkie %</span><span><i style="background:#B5543A"></i>Amortisation (J.)</span></div>
+  </div>
+
+  <!-- 4. Parameter volle Breite – 3 Spalten -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:4px;">
+    <div class="p-card no-break">
+      <div class="p-sect">Anlage &amp; Erzeugung</div>
+      <div id="printAnlage"></div>
+    </div>
+    <div class="p-card no-break">
+      <div class="p-sect">Verbrauch &amp; Tarif</div>
+      <div id="printTarif"></div>
+    </div>
+    <div class="p-card no-break">
+      <div class="p-sect">Kosten &amp; Zeitraum</div>
+      <div id="printKosten"></div>
+    </div>
+  </div>
+
+  <!-- 5. Amortisation (links) | Erzeugung vs. Verbrauch (rechts) -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px;">
+    <div class="p-card no-break">
+      <div class="p-chartT" id="printAmortTitle">Amortisation</div>
+      <div id="printAmort"></div>
+      <div class="p-legend" id="printAmortStats"></div>
+    </div>
+    <div class="p-card no-break">
+      <div class="p-chartT">Erzeugung vs. Verbrauch (monatlich)</div>
+      <div id="printMonthly"></div>
+      <div class="p-legend"><span><i style="background:#E8A92F"></i>Erzeugung</span><span><i style="background:#3E6B8C"></i>Verbrauch</span></div>
+    </div>
+  </div>
+
+  <!-- 6. Tagesprofile 2×2 -->
+  <div class="p-chart2" style="margin-bottom:4px;">
+    <div class="p-card no-break">
+      <div class="p-chartT">Frühlingstag · Speicherverlauf</div>
+      <div id="printDayFruehling"></div>
+      <div class="p-legend"><span><i style="background:#E8A92F"></i>Erzeugung</span><span><i style="background:#3E6B8C"></i>Verbrauch</span><span><i style="background:#2E7D5B"></i>Speicher</span></div>
+    </div>
+    <div class="p-card no-break">
+      <div class="p-chartT">Sommertag · Speicherverlauf</div>
+      <div id="printDaySommer"></div>
+      <div class="p-legend"><span><i style="background:#E8A92F"></i>Erzeugung</span><span><i style="background:#3E6B8C"></i>Verbrauch</span><span><i style="background:#2E7D5B"></i>Speicher</span></div>
+    </div>
+    <div class="p-card no-break">
+      <div class="p-chartT">Herbsttag · Speicherverlauf</div>
+      <div id="printDayHerbst"></div>
+      <div class="p-legend"><span><i style="background:#E8A92F"></i>Erzeugung</span><span><i style="background:#3E6B8C"></i>Verbrauch</span><span><i style="background:#2E7D5B"></i>Speicher</span></div>
+    </div>
+    <div class="p-card no-break">
+      <div class="p-chartT">Wintertag · Speicherverlauf</div>
+      <div id="printDayWinter"></div>
+      <div class="p-legend"><span><i style="background:#E8A92F"></i>Erzeugung</span><span><i style="background:#3E6B8C"></i>Verbrauch</span><span><i style="background:#2E7D5B"></i>Speicher</span></div>
+    </div>
+  </div>
+
+  <p class="p-foot">Schätzwerte auf Basis genormter Profile (BDEW-H0-ähnlich, Regionalerträge). Gut für die Entscheidung „Speicher ja/nein und wie groß", keine exakte Anlagenplanung.</p>
+</div>
+
+<div class="drop" id="dropOverlay" hidden><span>Datei hier ablegen zum Laden</span></div>
+<div class="modal" id="chartModal" hidden>
+  <div class="modalBox">
+    <button class="modalClose" id="modalClose" title="Schließen">×</button>
+    <div class="modalTitle" id="modalTitle"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ===================== Rechenkern ===================== */
+const C = {sun:"#E8A92F",sunDeep:"#C8791A",leaf:"#2E7D5B",sky:"#3E6B8C",clay:"#B5543A",ink:"#1A1A17",sub:"#6B6458",line:"rgba(26,26,23,0.10)"};
+const DIM=[31,28,31,30,31,30,31,31,30,31,30,31];
+const MN=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+const PV_SHARE=[.030,.045,.080,.110,.125,.125,.125,.110,.090,.070,.050,.030];
+const DAYLIGHT=[8.3,9.9,11.8,13.8,15.5,16.3,15.9,14.5,12.6,10.7,9.0,7.9];
+const LOAD_SEASON=[1.12,1.10,1.05,.98,.93,.90,.90,.92,.96,1.02,1.08,1.12];
+const LOAD_DAY=[.025,.020,.018,.017,.018,.025,.040,.055,.050,.045,.045,.048,.050,.045,.042,.045,.055,.070,.080,.075,.065,.055,.045,.035];
+const REGION_YIELD={Nord:950,Mitte:1010,"Süd":1090};
+// Näherungstabelle: 2-stelliges PLZ-Präfix -> spez. Ertrag (kWh/kWp·a), gut ausgerichtete Anlage.
+// ACHTUNG: approximiert aus dem regionalen Einstrahlungsverlauf (Süd höher als Nord).
+// Für belastbare Werte durch DWD-/PVGIS-Daten ersetzen.
+const PLZ_YIELD={
+  "01":995,"02":985,"03":1000,"04":990,"06":985,"07":985,"08":985,"09":980,
+  "10":1010,"12":1010,"13":1010,"14":1010,"15":1010,"16":1000,"17":975,"18":965,"19":960,
+  "20":945,"21":945,"22":945,"23":940,"24":935,"25":935,"26":945,"27":940,"28":945,"29":950,
+  "30":955,"31":955,"32":955,"33":960,"34":960,"35":975,"36":975,"37":960,"38":955,"39":975,
+  "40":960,"41":960,"42":955,"44":955,"45":955,"46":955,"47":960,"48":955,"49":955,
+  "50":975,"51":975,"52":975,"53":980,"54":995,"55":1010,"56":990,"57":960,"58":955,"59":955,
+  "60":1015,"61":1015,"63":1015,"64":1020,"65":1010,"66":1015,"67":1035,"68":1035,"69":1035,
+  "70":1065,"71":1065,"72":1075,"73":1065,"74":1060,"75":1070,"76":1075,"77":1090,"78":1095,"79":1120,
+  "80":1115,"81":1115,"82":1120,"83":1120,"84":1100,"85":1105,"86":1105,"87":1125,"88":1115,"89":1100,
+  "90":1055,"91":1055,"92":1045,"93":1060,"94":1075,"95":1035,"96":1045,"97":1050,"98":1000,"99":990
+};
+// Fallback je Leitzone (1. Ziffer), falls 2-stelliges Präfix fehlt
+const ZONE_YIELD={"0":988,"1":1000,"2":942,"3":962,"4":957,"5":978,"6":1020,"7":1080,"8":1112,"9":1045};
+function yieldFromPLZ(plz){
+  const d=(plz||"").replace(/\D/g,"");
+  if(d.length!==5)return null;
+  return PLZ_YIELD[d.slice(0,2)]??ZONE_YIELD[d[0]]??null;
+}
+function regionFromYield(y){return y<975?"Nord":y<=1040?"Mitte":"Süd";}
+const AZ={
+  "Süd":{f:1.00,shift:0},
+  "Südost":{f:0.96,shift:-1.5},
+  "Südwest":{f:0.96,shift:1.5},
+  "Ost":{f:0.86,shift:-3},
+  "West":{f:0.86,shift:3},
+  "Nord":{f:0.62,shift:0},
+};
+const AZ_OPTS=Object.keys(AZ);
+const SIZES=[0,3,5,8,10,12,15];
+
+/* ---- Modell-Konstanten (zentral, früher als Magic Numbers verstreut) ---- */
+const BAT_RT_EFF=0.9;                        // Round-Trip-Wirkungsgrad Speicher
+const BAT_EFF_IN=Math.sqrt(BAT_RT_EFF);      // Lade-Wirkungsgrad (√ des Round-Trip)
+const BAT_EFF_OUT=Math.sqrt(BAT_RT_EFF);     // Entlade-Wirkungsgrad
+const BAT_C_RATE=0.5;                        // Lade-/Entladeleistung als Anteil der Kapazität (0,5C)
+const BAT_START_SOC=0.3;                     // Start-Ladezustand für die Tagesprofil-Darstellung
+const EEG_FEED_CAP_FRAC=0.7;                 // §9 EEG: Einspeisebegrenzung auf 70 % der kWp
+// Repräsentativer Tag je Saison ([Monatsindex 0–11, Tag]) + Anzeigetitel – von Screen & Print genutzt
+const SEASON_DAY={"Frühling":[3,15],"Sommer":[5,15],"Herbst":[9,15],"Winter":[0,15]};
+const DAY_TITLE={"Frühling":"Frühlingstag","Sommer":"Sommertag","Herbst":"Herbsttag","Winter":"Wintertag"};
+
+function tiltFactor(t){const p=[[0,.91],[15,.97],[30,1],[45,.98],[60,.92],[90,.70]];
+  for(let i=0;i<p.length-1;i++){const[a,fa]=p[i],[b,fb]=p[i+1];if(t>=a&&t<=b)return fa+(fb-fa)*(t-a)/(b-a);}return t<0?.91:.70;}
+function specificYield(base,azf,t){return base*azf*tiltFactor(t);}
+// Stufenloses Azimut-Modell, konsistent zu AZ (Süd=1,0 · SO/SW=0,96 · O/W=0,86 · N=0,62)
+function azFactorDeg(deg){
+  deg=((deg%360)+360)%360;
+  let d=Math.abs(deg-180); if(d>180)d=360-d; // Abweichung von Süd 0..180
+  const pts=[[0,1.00],[45,0.96],[90,0.86],[135,0.74],[180,0.62]];
+  for(let i=0;i<pts.length-1;i++){const[a,fa]=pts[i],[b,fb]=pts[i+1];if(d>=a&&d<=b)return fa+(fb-fa)*(d-a)/(b-a);}
+  return 0.62;
+}
+function azShiftDeg(deg){deg=((deg%360)+360)%360;return Math.max(-4,Math.min(4,(deg-180)/30));}
+function azResolve(st){
+  if(st&&st.azimuth==="Custom"){const d=parseFloat(st.azimuthDeg);const deg=isNaN(d)?180:d;return{f:azFactorDeg(deg),shift:azShiftDeg(deg)};}
+  return AZ[st&&st.azimuth]||AZ["Süd"];
+}
+function azLabel(st){return st&&st.azimuth==="Custom"?`Azimut ${fmt((parseFloat(st.azimuthDeg)||180),0)}°`:(st?st.azimuth:"");}
+
+function hourWeights(shift){
+  return DAYLIGHT.map(L=>{const w=new Array(24).fill(0);let s=0;
+    for(let h=0;h<24;h++){const d=h+.5-(12+shift);if(Math.abs(d)<L/2){const v=Math.cos(Math.PI*d/L)**2;w[h]=v;s+=v;}}
+    return w.map(v=>s>0?v/s:0);});
+}
+
+function buildProfiles(strings,moduleWp,region,cons,p){
+  const shareSum=PV_SHARE.reduce((a,b)=>a+b,0);
+  const gen=new Float64Array(8760),load=new Float64Array(8760);
+  const invEff=(p&&p.inverterEff?p.inverterEff:97)/100;
+  // Erzeugung: Summe über alle Strings (je eigene Ausrichtung/Neigung)
+  strings.forEach(st=>{
+    const kWp=(parseFloat(st.modules)||0)*moduleWp/1000; if(kWp<=0)return;
+    const tilt=parseFloat(st.tilt)||0;
+    const azr=azResolve(st);
+    const yearGen=specificYield(p&&p.baseYield?p.baseYield:(REGION_YIELD[region]||1010),azr.f,tilt)*kWp;
+    const hw=hourWeights(azr.shift);
+    let idx=0;
+    for(let m=0;m<12;m++){
+      const dg=yearGen*(PV_SHARE[m]/shareSum)/DIM[m];
+      for(let d=0;d<DIM[m];d++)for(let h=0;h<24;h++){gen[idx]+=dg*hw[m][h]*invEff;idx++;}
+    }
+  });
+  // Haushaltsverbrauch
+  const daySum=LOAD_DAY.reduce((a,b)=>a+b,0);
+  const seasonSum=LOAD_SEASON.reduce((a,b,i)=>a+b*DIM[i],0);
+  let idx=0;
+  for(let m=0;m<12;m++){
+    const dl=cons*LOAD_SEASON[m]/seasonSum;
+    for(let d=0;d<DIM[m];d++)for(let h=0;h<24;h++){load[idx]=dl*(LOAD_DAY[h]/daySum);idx++;}
+  }
+  // E-Auto: Stundenprofil je Strategie
+  if(p&&p.evActive&&p.evKwh>0){
+    const evYear=p.evKwh;
+    // Solarstrategie: 9–17 Uhr, gewichtet nach Erzeugungsprofil (flach simuliert)
+    // Nachtstrategie: 22–6 Uhr gleich verteilt
+    // Gemischt: 50% Solar, 50% Nacht
+    const SOLAR_H=[0,0,0,0,0,0,0,.02,.06,.12,.16,.16,.14,.12,.10,.08,.04,0,0,0,0,0,0,0];
+    const NIGHT_H=[.08,.10,.12,.12,.12,.10,.08,0,0,0,0,0,0,0,0,0,0,0,0,0,.06,.10,.10,.12];
+    const norm=a=>{const s=a.reduce((x,y)=>x+y,0);return a.map(v=>v/s);};
+    const sh=norm(SOLAR_H),nh=norm(NIGHT_H);
+    // Saisonales Gewicht fürs EV: gleichmäßig (kein starker Wintereffekt)
+    const evSeasonW=LOAD_SEASON.map(()=>1);const evSeasonSum=evSeasonW.reduce((a,b,i)=>a+b*DIM[i],0);
+    let idx2=0;
+    for(let m=0;m<12;m++){
+      const dl=evYear*evSeasonW[m]/evSeasonSum;
+      for(let d=0;d<DIM[m];d++)for(let h=0;h<24;h++){
+        let w=0;
+        if(p.evStrategy==="solar")w=sh[h];
+        else if(p.evStrategy==="night")w=nh[h];
+        else w=(sh[h]+nh[h])/2;
+        load[idx2]+=dl*w;idx2++;
+      }
+    }
+  }
+  // Wärmepumpe: Winter-lastiges Saisonprofil, Betrieb 6–22 Uhr
+  if(p&&p.hpActive&&p.hpKwh>0){
+    const WP_SEASON=[1.6,1.5,1.2,.8,.4,.2,.15,.2,.4,.7,1.3,1.55]; // relativ zu 1
+    const wpSeasonSum=WP_SEASON.reduce((a,b,i)=>a+b*DIM[i],0);
+    const WP_H=[0,0,0,0,0,0,.04,.06,.07,.08,.08,.08,.07,.07,.07,.07,.08,.08,.07,.07,.06,.05,.04,0];
+    const wpHSum=WP_H.reduce((a,b)=>a+b,0);
+    let idx3=0;
+    for(let m=0;m<12;m++){
+      const dl=p.hpKwh*WP_SEASON[m]/wpSeasonSum;
+      for(let d=0;d<DIM[m];d++)for(let h=0;h<24;h++){load[idx3]+=dl*(WP_H[h]/wpHSum);idx3++;}
+    }
+  }
+  return {gen,load};
+}
+
+function simulate(gen,load,cap,feedCap){
+  const eIn=BAT_EFF_IN,eOut=BAT_EFF_OUT,maxP=cap*BAT_C_RATE;
+  const fc=feedCap!=null?feedCap:Infinity;
+  let soc=0,self=0,feed=0,grid=0,curtailed=0;
+  for(let i=0;i<gen.length;i++){
+    const g=gen[i],l=load[i],du=Math.min(g,l);self+=du;
+    let sur=g-du,def=l-du;
+    if(sur>0&&cap>0){const room=cap-soc,cin=Math.min(sur,maxP,room/eIn);soc+=cin*eIn;
+      const toFeed=sur-cin;const actualFeed=Math.min(toFeed,fc);curtailed+=toFeed-actualFeed;feed+=actualFeed;
+    }else{const toFeed=sur;const actualFeed=Math.min(toFeed,fc);curtailed+=toFeed-actualFeed;feed+=actualFeed;}
+    if(def>0&&cap>0){const av=soc*eOut,dis=Math.min(def,maxP,av);soc-=dis/eOut;self+=dis;grid+=def-dis;}else grid+=def;
+  }
+  const tg=gen.reduce((a,b)=>a+b,0),tl=load.reduce((a,b)=>a+b,0);
+  return {cap,totalGen:tg,totalLoad:tl,self,feed,grid,curtailed,eigen:tg>0?self/tg:0,autarkie:tl>0?self/tl:0};
+}
+
+function economics(sim,p,cap,gen,load,feedCap){
+  const inv=p.kWp*p.costPerKwp+cap*p.batteryCostPerKwh-p.foerderung;
+  const opCost=p.opCost||0;
+  const batDegr=p.batDegradation||0;
+  const cf=[{year:0,k:-inv,ref:0}];let cum=-inv,pay=null;
+  // Referenzlinie: Stromkosten ohne PV (kumuliert)
+  let refCum=0;
+  for(let y=1;y<=p.period;y++){
+    const priceY=p.gridPrice*(1+p.priceInc/100)**(y-1);
+    const pvDegr=(1-p.degradation/100)**(y-1);
+    const ft=y<=p.eegDuration?p.feedInTariff:p.restWert;
+    // Batteriedegradation: nur für gewählte Kapazität (nicht Sweep)
+    let savY;
+    if(cap>0&&batDegr>0&&gen&&load){
+      const capY=cap*(1-batDegr/100)**(y-1);
+      const simY=simulate(gen,load,capY,feedCap);
+      savY=simY.self*pvDegr*priceY+simY.feed*pvDegr*ft;
+    }else{
+      savY=sim.self*pvDegr*priceY+sim.feed*pvDegr*ft;
+    }
+    savY-=opCost;
+    // Referenz: volle Haushaltslast × Strompreis (kein Abzug durch PV)
+    refCum+=sim.totalLoad*priceY;
+    const prev=cum;cum+=savY;cf.push({year:y,k:Math.round(cum),ref:Math.round(refCum)});
+    if(pay===null&&prev<0&&cum>=0)pay=y-1+(0-prev)/(cum-prev);
+  }
+  const sav1=sim.self*p.gridPrice+sim.feed*p.feedInTariff-opCost;
+  return {inv,cf,pay,sav1,profit:cum};
+}
+
+// Empfohlene Speichergröße: größte Stufe, deren marginale kWh sich noch
+// innerhalb der EEG-Dauer rechnet. Genutzt von Screen- und Print-Render.
+function recommendSize(sweep,p){
+  let rec=0;
+  for(let i=1;i<sweep.length;i++){
+    const incCost=(sweep[i].cap-sweep[i-1].cap)*p.batteryCostPerKwh;
+    const incSave=sweep[i].sav1-sweep[i-1].sav1;
+    const incPay=incSave>0?incCost/incSave:Infinity;
+    if(incPay<=p.eegDuration)rec=sweep[i].cap;else break;
+  }
+  return rec;
+}
+
+// Heizkosten-Vergleich WP vs. bisherige Heizung (reine Zahlen, keine Darstellung).
+// Liefert null, wenn der Vergleich nicht aktiv ist. PV-Anteil via Marginal-Simulation
+// (erneute Simulation ohne WP-Last). Genutzt von Screen- und Print-Render.
+function heatCompare(p,strings,moduleWp,battery,feedCap,cur){
+  if(!(p.hpActive&&p.hpReplace&&p.hpKwh>0))return null;
+  const oldY1=p.hpOldUse*p.hpOldPrice;                 // Altkosten aus gemessenem Verbrauch (inkl. Kesselverluste)
+  const wpGridY1=p.hpKwh*p.gridPrice;                  // WP komplett aus dem Netz
+  const profNoWP=buildProfiles(strings,moduleWp,p.region,p.annualConsumption,{...p,hpActive:false});
+  const simNoWP=simulate(profNoWP.gen,profNoWP.load,battery,feedCap);
+  const dGrid=Math.max(0,cur.grid-simNoWP.grid);       // zusätzlicher Netzbezug durch WP
+  const dFeed=Math.max(0,simNoWP.feed-cur.feed);       // entgangene Einspeisung durch WP
+  const pvCovered=Math.max(0,p.hpKwh-dGrid);           // durch Solar/Speicher gedeckt
+  const wpPvY1=dGrid*p.gridPrice+dFeed*p.feedInTariff; // realer Mehrkosteneffekt der WP
+  const impliedEff=p.hpOldUse>0?p.hpHeat/p.hpOldUse*100:0;
+  let oldCum=0,wpGridCum=0,wpPvCum=0;
+  for(let y=1;y<=p.period;y++){const f=(1+p.priceInc/100)**(y-1);oldCum+=oldY1*f;wpGridCum+=wpGridY1*f;wpPvCum+=wpPvY1*f;}
+  return {oldY1,wpGridY1,dGrid,dFeed,pvCovered,wpPvY1,impliedEff,
+          diffY1:oldY1-wpPvY1,diffCum:oldCum-wpPvCum,oldCum,wpGridCum,wpPvCum,cheaper:oldY1>=wpPvY1};
+}
+
+/* ===================== Formatierung ===================== */
+const fmt=(n,d=0)=>Number(n).toLocaleString("de-DE",{minimumFractionDigits:d,maximumFractionDigits:d});
+const eur=n=>fmt(Math.round(n))+" €";
+const pct=n=>fmt(n*100,0)+" %";
+
+/* ===================== SVG-Diagramme ===================== */
+const sc=(v,d0,d1,r0,r1)=>d1===d0?(r0+r1)/2:r0+(v-d0)/(d1-d0)*(r1-r0);
+function svgOpen(w,h){return `<svg viewBox="0 0 ${w} ${h}" width="100%" preserveAspectRatio="xMidYMid meet" style="display:block">`;}
+function gridY(x0,x1,ys){return ys.map(y=>`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${C.line}"/>`).join("");}
+
+function sweepChart(sweep,battery,H=240){
+  const W=560,pad={l:40,r:44,t:14,b:30},iw=W-pad.l-pad.r,ih=H-pad.t-pad.b;
+  const maxA=100;const pays=sweep.map(s=>s.pay).filter(v=>v);const maxP=Math.max(10,...pays)*1.1;
+  const n=sweep.length,bw=iw/n*0.55;
+  let s=svgOpen(W,H);
+  const yt=[0,.25,.5,.75,1].map(f=>pad.t+ih*(1-f));
+  s+=gridY(pad.l,W-pad.r,yt);
+  [0,25,50,75,100].forEach((v,i)=>{s+=`<text x="${pad.l-6}" y="${yt[i]+4}" text-anchor="end" font-size="10" fill="${C.sub}">${v}</text>`;});
+  // bars
+  sweep.forEach((d,i)=>{
+    const cx=pad.l+iw*(i+0.5)/n;const h=ih*(d.autarkie*100/maxA);
+    const on=d.cap===battery;
+    s+=`<rect x="${cx-bw/2}" y="${pad.t+ih-h}" width="${bw}" height="${h}" rx="4" fill="${on?C.sun:C.leaf}" fill-opacity="${on?1:.5}"><title>${d.cap} kWh — Autarkie ${pct(d.autarkie)}</title></rect>`;
+    s+=`<text x="${cx}" y="${H-10}" text-anchor="middle" font-size="10" fill="${C.sub}">${d.cap}</text>`;
+  });
+  // payback line
+  let pts=[];sweep.forEach((d,i)=>{if(d.pay){const cx=pad.l+iw*(i+0.5)/n;const y=pad.t+ih*(1-Math.min(d.pay,maxP)/maxP);pts.push([cx,y,d]);}});
+  if(pts.length){s+=`<polyline points="${pts.map(p=>p[0]+","+p[1]).join(" ")}" fill="none" stroke="${C.clay}" stroke-width="2.5"/>`;
+    pts.forEach(p=>{s+=`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${C.clay}"><title>${p[2].cap} kWh — ${fmt(p[2].pay,1)} Jahre</title></circle>`;});}
+  // right axis
+  [0,.5,1].forEach(f=>{const y=pad.t+ih*(1-f);s+=`<text x="${W-pad.r+6}" y="${y+4}" font-size="10" fill="${C.sub}">${fmt(maxP*f,0)}</text>`;});
+  return s+"</svg>";
+}
+
+function lineChart(data,xKey,series,opts={}){
+  const W=560,H=opts.h||220,pad={l:46,r:14,t:14,b:26},iw=W-pad.l-pad.r,ih=H-pad.t-pad.b;
+  const xs=data.map(d=>d[xKey]);
+  const allY=[];series.forEach(se=>data.forEach(d=>allY.push(d[se.key])));
+  let yMin=Math.min(0,...allY),yMax=Math.max(...allY);if(yMax===yMin)yMax+=1;
+  const X=i=>sc(i,0,Math.max(1,data.length-1),pad.l,W-pad.r);
+  const Y=v=>sc(v,yMin,yMax,pad.t+ih,pad.t);
+  let s=svgOpen(W,H);
+  const ticks=4;const yt=[];for(let i=0;i<=ticks;i++){const v=yMin+(yMax-yMin)*i/ticks;yt.push(Y(v));s+=`<text x="${pad.l-6}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="${C.sub}">${opts.yfmt?opts.yfmt(v):fmt(v)}</text>`;}
+  s+=gridY(pad.l,W-pad.r,yt);
+  if(opts.yunit)s+=`<text x="3" y="10" font-size="10" fill="${C.sub}">${opts.yunit}</text>`;
+  if(yMin<0&&yMax>0)s+=`<line x1="${pad.l}" y1="${Y(0)}" x2="${W-pad.r}" y2="${Y(0)}" stroke="${C.ink}" stroke-dasharray="4 4"/>`;
+  // x labels
+  const step=Math.max(1,Math.round(data.length/8));
+  data.forEach((d,i)=>{if(i%step===0||i===data.length-1)s+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" font-size="9" fill="${C.sub}">${opts.xfmt?opts.xfmt(d[xKey]):d[xKey]}</text>`;});
+  if(opts.vline!=null)s+=`<line x1="${X(opts.vline)}" y1="${pad.t}" x2="${X(opts.vline)}" y2="${pad.t+ih}" stroke="${C.sun}" stroke-width="2"/><text x="${X(opts.vline)}" y="${pad.t-2}" text-anchor="middle" font-size="10" fill="${C.sunDeep}">${opts.vlabel||""}</text>`;
+  series.forEach(se=>{
+    if(se.area){const top=data.map((d,i)=>X(i)+","+Y(d[se.key])).join(" ");
+      s+=`<polygon points="${X(0)},${Y(yMin<0?0:yMin)} ${top} ${X(data.length-1)},${Y(yMin<0?0:yMin)}" fill="${se.color}" fill-opacity="0.15"/>`;}
+    const pts=data.map((d,i)=>X(i)+","+Y(d[se.key])).join(" ");
+    s+=`<polyline points="${pts}" fill="none" stroke="${se.color}" stroke-width="2.4" ${se.dash?'stroke-dasharray="5 3"':""}/>`;
+  });
+  return s+"</svg>";
+}
+
+/* ===================== App-Logik ===================== */
+const NUM=["annualConsumption","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","opCost","evKwh","hpHeat","hpCop","hpOldPrice","hpOldUse"];
+let battery=8;
+let daySeason="Sommer";
+
+function readParams(){
+  const p={region:document.getElementById("region").value};
+  NUM.forEach(k=>{const el=document.getElementById(k);if(el)p[k]=parseFloat(el.value)||0;});
+  // Sicherstellen dass inverterEff nie 0 ist
+  if(!p.inverterEff||p.inverterEff<50)p.inverterEff=97;
+  // Standort: PLZ überschreibt Region (wenn erkannt), sonst Region-Dropdown
+  const plzEl=document.getElementById("plz");
+  p.plz=plzEl?plzEl.value.trim():"";
+  const plzY=yieldFromPLZ(p.plz);
+  p.plzResolved=plzY!=null;
+  p.baseYield=plzY!=null?plzY:(REGION_YIELD[p.region]||1010);
+  // E-Auto
+  p.evActive=document.getElementById("evToggle").checked;
+  p.evStrategy=document.getElementById("evStrategy").value;
+  // Wärmepumpe
+  p.hpActive=document.getElementById("hpToggle").checked;
+  // WP-Strombedarf = Wärmebedarf / COP
+  p.hpKwh=p.hpActive&&p.hpCop>0?p.hpHeat/p.hpCop:0;
+  // Heizkosten-Vergleich (WP ersetzt bisherige Heizung)
+  p.hpReplace=document.getElementById("hpReplaceToggle").checked;
+  p.hpOldFuel=document.getElementById("hpOldFuel").value;
+  // Gesamtverbrauch inkl. EV + WP
+  p.evKwhActive=p.evActive?p.evKwh:0;
+  p.totalConsumption=p.annualConsumption+p.evKwhActive+p.hpKwh;
+  // 70%-Begrenzung
+  p.limit70=document.getElementById("limit70Toggle").checked;
+  return p;
+}
+
+function render(){
+  const p=readParams();
+  // Badge-Updates
+  document.getElementById("evBadge").style.display=p.evActive?"inline":"none";
+  document.getElementById("hpBadge").style.display=p.hpActive?"inline":"none";
+  if(p.hpActive&&p.hpKwh>0){
+    document.getElementById("hpNote").innerHTML=
+      `Strombedarf WP: <b class="mono" style="color:var(--sunDeep)">${fmt(p.hpKwh)} kWh/a</b> (${fmt(p.hpHeat)} kWh ÷ COP ${fmt(p.hpCop,1)})`;
+  }else{document.getElementById("hpNote").innerHTML="";}
+
+  const moduleWp=parseFloat(document.getElementById("moduleWp").value)||0;
+  p.kWp=strings.reduce((a,s)=>a+(parseFloat(s.modules)||0)*moduleWp/1000,0);
+  // Kostenaufstellung -> Anlage (€/kWp)
+  const costTotal=costItems.reduce((a,c)=>a+(parseFloat(c.amount)||0),0);
+  const cppInput=document.getElementById("costPerKwp");
+  if(costTotal>0&&p.kWp>0){
+    p.costPerKwp=costTotal/p.kWp;
+    cppInput.value=fmt(p.costPerKwp,0);
+    cppInput.readOnly=true;cppInput.style.background="#F1ECE1";cppInput.title="Aus Kostenaufstellung übernommen";
+  }else{
+    cppInput.readOnly=false;cppInput.style.background="#fff";cppInput.title="";
+  }
+  document.getElementById("costSum").innerHTML=
+    `Summe: <b class="mono">${eur(costTotal)}</b><br>`+
+    `÷ ${fmt(p.kWp)} kWp = <b class="mono" style="color:var(--sunDeep)">${p.kWp>0?eur(costTotal/p.kWp):"–"}/kWp</b>`+
+    (costTotal>0?` <span style="font-size:12px;color:var(--sub)">(im Kalkulator übernommen)</span>`:"");
+  // Batteriespeicher -> Speicher (€/kWh)
+  const batCap=parseFloat(document.getElementById("batCap").value)||0;
+  const batPrice=parseFloat(document.getElementById("batPrice").value)||0;
+  const bcInput=document.getElementById("batteryCostPerKwh");
+  if(batCap>0&&batPrice>0){
+    p.batteryCostPerKwh=batPrice/batCap;
+    bcInput.value=fmt(p.batteryCostPerKwh,0);
+    bcInput.readOnly=true;bcInput.style.background="#F1ECE1";bcInput.title="Aus Kostenaufstellung übernommen";
+  }else{
+    bcInput.readOnly=false;bcInput.style.background="#fff";bcInput.title="";
+  }
+  document.getElementById("batSum").innerHTML=
+    (batCap>0&&batPrice>0)
+      ? `<b class="mono">${eur(batPrice)}</b> ÷ ${fmt(batCap,1)} kWh = <b class="mono" style="color:var(--sunDeep)">${eur(p.batteryCostPerKwh)}/kWh</b> <span style="font-size:12px;color:var(--sub)">(im Kalkulator übernommen)</span>`
+      : `<span style="font-size:13px;color:var(--sub)">Kapazität und Preis eingeben, um €/kWh automatisch zu berechnen.</span>`;
+  const prof=buildProfiles(strings,moduleWp,p.region,p.annualConsumption,p);
+  const totalYield=strings.reduce((a,s)=>a+specificYield(p.baseYield,azResolve(s).f,parseFloat(s.tilt)||0)*((parseFloat(s.modules)||0)*moduleWp/1000),0);
+  document.querySelectorAll("#stringList .skwp").forEach((el,i)=>{if(strings[i])el.textContent=fmt((parseFloat(strings[i].modules)||0)*moduleWp/1000,2)+" kWp";});
+  // PLZ-Auflösung anzeigen + Region-Dropdown ausgrauen, wenn PLZ greift
+  const plzNoteEl=document.getElementById("plzNote"),regionEl=document.getElementById("region");
+  if(p.plzResolved){
+    plzNoteEl.innerHTML=`📍 PLZ ${p.plz} → ca. <b class="mono" style="color:var(--sunDeep)">${fmt(p.baseYield)} kWh/kWp·a</b> (Basiswert Süd-Ausrichtung, Region <i>${regionFromYield(p.baseYield)}</i>). Überschreibt das Region-Feld. <span style="color:var(--sub)">Näherung – für exakte Werte DWD/PVGIS.</span>`;
+    regionEl.disabled=true;regionEl.style.opacity="0.45";regionEl.title="Wird durch PLZ überschrieben";
+  }else{
+    regionEl.disabled=false;regionEl.style.opacity="";regionEl.title="";
+    plzNoteEl.innerHTML=p.plz?`<span style="color:var(--clay)">PLZ „${p.plz}" nicht erkannt – es wird die gewählte Region (${p.region}) verwendet.</span>`:"";
+  }
+
+  const extraNote=(p.evActive||p.hpActive)?
+    ` · Gesamtverbrauch inkl. <span style="color:var(--sunDeep);font-weight:700">${fmt(p.totalConsumption)} kWh/a</span>`+
+    (p.evActive?` (+ ${fmt(p.evKwhActive)} EV)`:"")+
+    (p.hpActive?` (+ ${fmt(p.hpKwh)} WP)`:""): "";
+  const effYield=p.kWp>0?totalYield/p.kWp:0;
+  let yieldRows="";
+  strings.forEach((st,i)=>{
+    const kWp=(parseFloat(st.modules)||0)*moduleWp/1000; if(kWp<=0)return;
+    const sy=specificYield(p.baseYield,azResolve(st).f,parseFloat(st.tilt)||0);
+    yieldRows+=`<div class="tip-row"><span>String ${i+1} · ${azLabel(st)} ${fmt(parseFloat(st.tilt)||0,0)}°</span><b>${fmt(sy)} <span style="opacity:.55">(${fmt(kWp,2)} kWp)</span></b></div>`;
+  });
+  const yieldTip=`<div class="tip-title">Spezifischer Ertrag – Herleitung</div>`+
+    `<div class="tip-row"><span>Standort-Basiswert (ideales Süddach)</span><b>${fmt(p.baseYield)} kWh/kWp·a</b></div>`+
+    `<div class="tip-sep"></div>${yieldRows}`+
+    `<div class="tip-row tip-sum"><span>Effektiv (kWp-gewichtet)</span><b>= ${fmt(effYield)} kWh/kWp·a</b></div>`+
+    `<div class="tip-note">Je String: Basiswert × Ausrichtungsfaktor × Neigungsfaktor. Ost/West (Faktor 0,86 statt 1,0 für Süd) und flache Neigung senken den Ertrag gegenüber dem Standort-Potenzial.</div>`;
+  document.getElementById("yieldNote").innerHTML=
+    `Gesamt: <b class="mono">${fmt(p.kWp,2)} kWp</b> · ${fmt(totalYield)} kWh/a`+
+    (p.kWp>0?` · <span class="info-wrap" tabindex="0">⌀ ${fmt(effYield)} kWh/kWp·a<span class="info-i" aria-hidden="true">i</span><span class="info-tip">${yieldTip}</span></span>`:"")+extraNote;
+
+  const sweep=SIZES.map(c=>{const sim=simulate(prof.gen,prof.load,c,p.limit70?p.kWp*EEG_FEED_CAP_FRAC:Infinity);return {...sim,...economics(sim,p,c)};});
+
+  // Empfehlung
+  const rec=recommendSize(sweep,p);
+  document.getElementById("recVal").innerHTML=`${rec} <span style="font-size:20px">kWh</span>`;
+  document.getElementById("recText").textContent=rec===0
+    ?"Kein Speicher amortisiert sich hier innerhalb der EEG-Dauer – die PV-Anlage allein ist am wirtschaftlichsten."
+    :"Größte Stufe, deren zusätzliche kWh sich noch innerhalb der EEG-Dauer rechnet. Jede weitere kWh bringt kaum Mehrnutzen.";
+
+  // Battery selector
+  const sel=document.getElementById("batterySel");
+  sel.innerHTML=SIZES.map(s=>`<button data-b="${s}" class="${s===battery?"on":""}">${s} kWh</button>`).join("");
+  sel.querySelectorAll("button").forEach(b=>b.onclick=()=>{battery=+b.dataset.b;render();});
+
+  const feedCap=p.limit70?p.kWp*EEG_FEED_CAP_FRAC:Infinity;
+  const cur={...simulate(prof.gen,prof.load,battery,feedCap)};Object.assign(cur,economics(cur,p,battery,prof.gen,prof.load,feedCap));
+
+  // KPIs
+  const co2=cur.totalGen*p.co2Factor/1000;
+
+  // 70%-Begrenzungs-Hinweis
+  const curtailNote=document.getElementById("curtailNote");
+  const advWarnBadge=document.getElementById("advWarnBadge");
+  if(p.limit70&&cur.curtailed>0){
+    curtailNote.style.display="block";
+    curtailNote.style.color="var(--clay)";
+    curtailNote.textContent=`⚠ Abgeregelt: ${fmt(cur.curtailed)} kWh/Jahr (${fmt(cur.totalGen>0?cur.curtailed/cur.totalGen*100:0,1)} % der Brutto-Erzeugung)`;
+    advWarnBadge.style.display="none";
+  }else if(p.kWp>7&&!p.limit70){
+    curtailNote.style.display="block";
+    curtailNote.style.color="var(--clay)";
+    curtailNote.textContent="Hinweis: Anlage >7 kWp – §9 EEG-Begrenzung auf 70 % sollte aktiviert werden, sofern kein Smart Meter vorhanden.";
+    advWarnBadge.style.display="inline";
+  }else{
+    curtailNote.style.display="none";
+    advWarnBadge.style.display="none";
+  }
+
+  const kpiExtra=p.evActive||p.hpActive?`<div class="card kpi"><div class="lab">Gesamtverbrauch</div><div class="disp val mono" style="color:var(--ink);font-size:20px">${fmt(p.totalConsumption)} kWh</div><div class="sb">inkl.${p.evActive?" E-Auto":""}${p.hpActive?" WP":""}</div></div>`:"";
+  const evSave1=cur.self*p.gridPrice, feedRev1=cur.feed*p.feedInTariff, op1=p.opCost||0;
+  const savTip=`<div class="tip-title">Ersparnis Jahr 1 – Zusammensetzung</div>`+
+    `<div class="tip-row"><span>Eigenverbrauch (verm. Netzbezug)</span><b>+ ${eur(evSave1)}</b></div>`+
+    `<div class="tip-row"><span>Einspeisevergütung</span><b>+ ${eur(feedRev1)}</b></div>`+
+    `<div class="tip-row"><span>Betriebskosten</span><b>− ${eur(op1)}</b></div>`+
+    `<div class="tip-row tip-sum"><span>Ersparnis Jahr 1</span><b>= ${eur(cur.sav1)}</b></div>`;
+  const pvCost1=p.kWp*p.costPerKwp, batCost1=battery*p.batteryCostPerKwh, foerd1=p.foerderung||0;
+  const amortTip=`<div class="tip-title">Amortisation – Investition</div>`+
+    `<div class="tip-row"><span>PV-Anlage (${fmt(p.kWp,1)} kWp)</span><b>+ ${eur(pvCost1)}</b></div>`+
+    (battery>0?`<div class="tip-row"><span>Batteriespeicher (${battery} kWh)</span><b>+ ${eur(batCost1)}</b></div>`:"")+
+    (foerd1>0?`<div class="tip-row"><span>Förderung</span><b>− ${eur(foerd1)}</b></div>`:"")+
+    `<div class="tip-row tip-sum"><span>Investition netto</span><b>= ${eur(cur.inv)}</b></div>`+
+    `<div class="tip-note">${cur.pay?`Amortisiert nach ${fmt(cur.pay,1)} Jahren`:`Amortisiert sich nicht innerhalb von ${p.period} Jahren`} – Break-even des kumulierten Cashflows (mit Preissteigerung, Degradation &amp; EEG-Ende).</div>`;
+  document.getElementById("kpis").innerHTML=[
+    ["Autarkiegrad",pct(cur.autarkie),C.leaf,`bei ${battery} kWh Speicher`],
+    ["Eigenverbrauch",pct(cur.eigen),C.sun,"der Erzeugung"],
+    ["Ersparnis Jahr 1",eur(cur.sav1),C.sky,"pro Jahr",savTip],
+    ["Amortisation",cur.pay?fmt(cur.pay,1)+" J.":"> "+p.period+" J.",C.clay,`Invest ${eur(cur.inv)}`,amortTip],
+  ].map(([l,v,c,sb,tip])=>`<div class="card kpi${tip?" has-tip":""}"${tip?' tabindex="0"':""}>${tip?'<span class="kpi-i" aria-hidden="true">i</span>':""}<div class="lab">${l}</div><div class="disp val" style="color:${c}">${v}</div><div class="sb">${sb}</div>${tip?`<div class="kpi-tip">${tip}</div>`:""}</div>`).join("")+kpiExtra;
+
+  // Einspeise-Leiste
+  const feedPct=cur.totalGen>0?cur.feed/cur.totalGen:0;
+  const feedEur1=cur.feed*p.feedInTariff;
+  document.getElementById("feedKwh").textContent=fmt(cur.feed)+" kWh";
+  document.getElementById("feedKwhPct").textContent="ca. "+fmt(feedPct*100,0)+" % der Erzeugung";
+  document.getElementById("feedEur").textContent=eur(feedEur1);
+  document.getElementById("feedEurSub").textContent="à "+fmt(p.feedInTariff,3)+" €/kWh · EEG";
+
+  // Eigenverbrauchs-Leiste
+  const selfPct=cur.totalGen>0?cur.self/cur.totalGen:0;
+  const selfEur1=cur.self*p.gridPrice;
+  document.getElementById("selfKwh").textContent=fmt(cur.self)+" kWh";
+  document.getElementById("selfPct").textContent="ca. "+fmt(selfPct*100,0)+" % der Erzeugung";
+  document.getElementById("selfEur").textContent=eur(selfEur1);
+  document.getElementById("selfSub").textContent="à "+fmt(p.gridPrice,2)+" €/kWh · vermiedener Netzbezug";
+
+  // Sweep chart
+  document.getElementById("sweepChart").innerHTML=sweepChart(sweep,battery);
+
+  // Amortisation mit Referenzlinie
+  document.getElementById("amortTitle").textContent=`Amortisation über ${p.period} Jahre · ${battery} kWh`;
+  document.getElementById("amortChart").innerHTML=lineChart(cur.cf,"year",
+    [{key:"k",color:C.sky},{key:"ref",color:C.clay,dash:true}],
+    {h:220,yfmt:v=>fmt(v/1000)+"k",xfmt:v=>v,vline:cur.pay?Math.round(cur.pay):null,vlabel:"Break-even"});
+  document.getElementById("amortStats").innerHTML=
+    `<span><i style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${C.sky};margin-right:4px;vertical-align:middle"></i>Kumulierter Cashflow PV</span>`+
+    `<span><i style="display:inline-block;width:10px;height:2px;background:${C.clay};margin-right:4px;vertical-align:middle;border-top:2px dashed ${C.clay}"></i>Stromkosten ohne PV</span>`+
+    `<span style="margin-left:8px">Gewinn nach ${p.period} J.: <b class="mono" style="color:${cur.profit>=0?C.leaf:C.clay}">${eur(cur.profit)}</b></span>`+
+    (p.co2Factor>0?`<span>CO₂-Einsparung: <b class="mono">${fmt(co2)} kg/a</b></span>`:"");
+
+  // Heizkosten-Vergleich: WP vs. bisherige Heizung
+  const hpCard=document.getElementById("hpCompareCard");
+  const hc=heatCompare(p,strings,moduleWp,battery,feedCap,cur);
+  if(hc){
+    const fuelName={gas:"Erdgas",oel:"Heizöl",pellets:"Pellets",fern:"Fernwärme",strom:"Strom-Direktheizung"}[p.hpOldFuel]||"Bisherige Heizung";
+    const effOk=hc.impliedEff>0&&hc.impliedEff<=100;
+    const effText=hc.impliedEff<=0?"":(effOk
+      ? `Dein Verbrauch entspricht einem Wirkungsgrad der alten Heizung von ≈ ${fmt(hc.impliedEff,0)} %. `
+      : `<b style="color:var(--clay)">Hinweis: Der eingegebene Verbrauch liegt unter dem Heizwärmebedarf (${fmt(p.hpHeat)} kWh) – das ergäbe einen Wirkungsgrad über 100 %.</b> `);
+    hpCard.style.display="block";
+    document.getElementById("hpCompareBody").innerHTML=
+      `<div class="hpc-row"><span>${fuelName} <span style="color:var(--sub)">· ${fmt(p.hpOldUse)} kWh Brennstoff</span></span><b class="mono">${eur(hc.oldY1)}/a</b></div>`+
+      `<div class="hpc-row"><span>Wärmepumpe (nur Netzstrom) <span style="color:var(--sub)">· ${fmt(p.hpKwh)} kWh · COP ${fmt(p.hpCop,1)}</span></span><b class="mono">${eur(hc.wpGridY1)}/a</b></div>`+
+      `<div class="hpc-row"><span>Wärmepumpe mit PV-Eigenanteil <span style="color:var(--sub)">· ${fmt(hc.pvCovered)} kWh solar gedeckt</span></span><b class="mono" style="color:var(--leaf)">${eur(hc.wpPvY1)}/a</b></div>`+
+      `<div class="hpc-row hpc-diff"><span>${hc.cheaper?"WP mit PV spart":"WP mit PV kostet mehr"}</span><b class="mono" style="color:${hc.cheaper?"var(--leaf)":"var(--clay)"}">${eur(Math.abs(hc.diffY1))}/a</b></div>`+
+      `<div class="hpc-note">Über ${p.period} Jahre (gleiche Preissteigerung ${fmt(p.priceInc,1)} %/a angenommen): WP mit PV ${hc.diffCum>=0?"günstiger":"teurer"} um <b class="mono" style="color:${hc.diffCum>=0?"var(--leaf)":"var(--clay)"}">${eur(Math.abs(hc.diffCum))}</b>. PV-Anteil aus Marginalrechnung (Mehr-Netzbezug + entgangene Einspeisung). ${effText}Gas-/Strompreise können sich real unterschiedlich entwickeln.</div>`;
+  }else{hpCard.style.display="none";}
+
+  // Monatsverlauf
+  const monthly=MN.map(name=>({name,Erzeugung:0,Verbrauch:0}));let idx=0;
+  for(let m=0;m<12;m++)for(let d=0;d<DIM[m];d++)for(let h=0;h<24;h++){monthly[m].Erzeugung+=prof.gen[idx];monthly[m].Verbrauch+=prof.load[idx];idx++;}
+  document.getElementById("monthlyChart").innerHTML=lineChart(monthly,"name",
+    [{key:"Erzeugung",color:C.sun,area:true},{key:"Verbrauch",color:C.sky,area:true}],
+    {h:200,yfmt:v=>fmt(v),yunit:"kWh"});
+
+  // Tagesprofil je Saison (repräsentativer Tag, Monatsmitte) – gemeinsame Funktion mit dem Print-View
+  document.getElementById("dayTitle").textContent=DAY_TITLE[daySeason]+" · Speicherverlauf";
+  const day=buildDayProfile(prof,daySeason);
+  document.getElementById("dayChart").innerHTML=lineChart(day,"h",
+    [{key:"Erzeugung",color:C.sun},{key:"Verbrauch",color:C.sky},{key:"Speicher",color:C.leaf,dash:true}],
+    {h:200,yfmt:v=>fmt(v,1),xfmt:v=>v+"h",yunit:"kWh"});
+}
+
+/* ===================== Strings (Anlagenteile) ===================== */
+let strings=[{modules:12,azimuth:"Süd",tilt:40}];
+function mkField(label){const d=document.createElement("div");d.className="field";const l=document.createElement("label");l.textContent=label;d.append(l);return d;}
+function renderStrings(){
+  const wrap=document.getElementById("stringList");
+  wrap.innerHTML="";
+  strings.forEach((st,i)=>{
+    const card=document.createElement("div");card.className="stringcard";
+    const hdr=document.createElement("div");hdr.className="stringhdr";
+    const t=document.createElement("span");t.textContent="String "+(i+1)+" · ";
+    const kw=document.createElement("span");kw.className="skwp";kw.style.cssText="color:var(--sunDeep);font-weight:700;";t.append(kw);hdr.append(t);
+    if(strings.length>1){const del=document.createElement("span");del.className="del";del.textContent="×";del.title="String entfernen";
+      del.onclick=()=>{strings.splice(i,1);document.getElementById("stringCount").value=strings.length;renderStrings();render();};hdr.append(del);}
+    const g=document.createElement("div");g.className="g3";
+    const f1=mkField("Module");const i1=document.createElement("input");i1.type="number";i1.min="0";i1.value=st.modules;i1.placeholder="Anzahl";
+    i1.addEventListener("input",e=>{strings[i].modules=e.target.value;render();});f1.append(i1);
+    const f2=mkField("Ausrichtung");const s2=document.createElement("select");
+    AZ_OPTS.forEach(o=>{const op=document.createElement("option");op.value=o;op.textContent=o;if(o===st.azimuth)op.selected=true;s2.append(op);});
+    const opC=document.createElement("option");opC.value="Custom";opC.textContent="Azimut (°)";if(st.azimuth==="Custom")opC.selected=true;s2.append(opC);
+    s2.addEventListener("change",e=>{
+      if(e.target.value==="Custom"){strings[i].azimuth="Custom";if(strings[i].azimuthDeg==null)strings[i].azimuthDeg=180;}
+      else strings[i].azimuth=e.target.value;
+      renderStrings();render();
+    });f2.append(s2);
+    if(st.azimuth==="Custom"){
+      const ad=document.createElement("input");ad.type="number";ad.min="0";ad.max="360";ad.step="5";
+      ad.value=st.azimuthDeg!=null?st.azimuthDeg:180;ad.placeholder="180=Süd · 90=Ost · 270=West";
+      ad.style.marginTop="6px";ad.title="0/360=Nord · 90=Ost · 180=Süd · 270=West";
+      ad.addEventListener("input",e=>{strings[i].azimuthDeg=e.target.value;render();});
+      f2.append(ad);
+    }
+    const f3=mkField("Neigung (°)");const i3=document.createElement("input");i3.type="number";i3.value=st.tilt;i3.placeholder="°";
+    i3.addEventListener("input",e=>{strings[i].tilt=e.target.value;render();});f3.append(i3);
+    g.append(f1,f2,f3);card.append(hdr,g);wrap.append(card);
+  });
+}
+document.getElementById("stringCount").addEventListener("input",e=>{
+  let n=Math.max(1,Math.min(20,parseInt(e.target.value)||1));
+  while(strings.length<n)strings.push({modules:0,azimuth:"Süd",tilt:30});
+  while(strings.length>n)strings.pop();
+  renderStrings();render();
+});
+
+/* ===================== Kostenaufstellung ===================== */
+let costItems=[
+  {desc:"",amount:""},
+  {desc:"",amount:""},
+  {desc:"",amount:""},
+];
+
+function renderCosts(){
+  const list=document.getElementById("costList");
+  list.innerHTML="";
+  costItems.forEach((item,i)=>{
+    const row=document.createElement("div");row.className="costrow";
+    const d=document.createElement("input");d.className="desc";d.type="text";d.placeholder="Bezeichnung";d.value=item.desc;
+    d.addEventListener("input",e=>{costItems[i].desc=e.target.value;});
+    const a=document.createElement("input");a.className="amt";a.type="number";a.placeholder="0";a.value=item.amount;a.min="0";
+    a.addEventListener("input",e=>{costItems[i].amount=e.target.value;render();});
+    const r=document.createElement("button");r.className="rm";r.textContent="×";r.title="Entfernen";
+    r.addEventListener("click",()=>{costItems.splice(i,1);renderCosts();render();});
+    row.append(d,a,r);list.append(row);
+  });
+}
+document.getElementById("addCost").addEventListener("click",()=>{
+  costItems.push({desc:"",amount:""});renderCosts();render();
+});
+
+/* ===================== Reiter ===================== */
+/* ===================== Navigation ===================== */
+function showPanel(which){
+  document.getElementById("panel-calc").hidden=which!=="calc";
+  document.getElementById("panel-costs").hidden=which!=="costs";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.getElementById("openCosts").addEventListener("click",()=>showPanel("costs"));
+document.getElementById("backCalc").addEventListener("click",()=>showPanel("calc"));
+document.querySelectorAll("#seasonSel button").forEach(b=>b.addEventListener("click",()=>{
+  daySeason=b.dataset.season;
+  document.querySelectorAll("#seasonSel button").forEach(x=>x.classList.toggle("on",x.dataset.season===daySeason));
+  render();
+}));
+
+/* ===================== Speichern / Laden ===================== */
+const SAVE_IDS=["region","plz","moduleWp","annualConsumption","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","opCost","batCap","batPrice","evKwh","evStrategy","hpHeat","hpCop","hpOldFuel","hpOldPrice","hpOldUse"];
+function gatherState(){
+  const fields={};
+  SAVE_IDS.forEach(id=>{const el=document.getElementById(id);if(el)fields[id]=el.value;});
+  return {app:"pv-rechner",version:4,fields,strings,costItems,battery,
+    evActive:document.getElementById("evToggle").checked,
+    hpActive:document.getElementById("hpToggle").checked,
+    hpReplace:document.getElementById("hpReplaceToggle").checked,
+    limit70:document.getElementById("limit70Toggle").checked};
+}
+function downloadState(){
+  const blob=new Blob([JSON.stringify(gatherState(),null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;
+  const d=new Date();const stamp=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  a.download="pv-rechner-"+stamp+".json";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+function applyState(state){
+  if(!state||!state.fields){alert("Datei enthält keine gültigen PV-Rechner-Daten.");return;}
+  Object.entries(state.fields).forEach(([id,val])=>{const el=document.getElementById(id);if(el)el.value=val;});
+  if(Array.isArray(state.strings)&&state.strings.length)strings=state.strings.map(s=>({modules:s.modules,azimuth:s.azimuth,tilt:s.tilt,azimuthDeg:s.azimuthDeg}));
+  document.getElementById("stringCount").value=strings.length;
+  if(Array.isArray(state.costItems))costItems=state.costItems.map(c=>({desc:c.desc||"",amount:c.amount||""}));
+  if(typeof state.battery==="number")battery=state.battery;
+  if(typeof state.evActive==="boolean"){document.getElementById("evToggle").checked=state.evActive;document.getElementById("evSection").classList.toggle("open",state.evActive);}
+  if(typeof state.hpActive==="boolean"){document.getElementById("hpToggle").checked=state.hpActive;document.getElementById("hpSection").classList.toggle("open",state.hpActive);}
+  if(typeof state.hpReplace==="boolean"){document.getElementById("hpReplaceToggle").checked=state.hpReplace;document.getElementById("hpCompareSection").classList.toggle("open",state.hpReplace);}
+  if(typeof state.limit70==="boolean")document.getElementById("limit70Toggle").checked=state.limit70;
+  renderStrings();renderCosts();render();
+}
+function loadStateFile(file){
+  const r=new FileReader();
+  r.onload=e=>{try{applyState(JSON.parse(e.target.result));}catch(err){alert("Datei konnte nicht gelesen werden – ist es eine gültige PV-Rechner-Datei?");}};
+  r.readAsText(file);
+}
+document.getElementById("saveBtn").addEventListener("click",downloadState);
+document.getElementById("loadBtn").addEventListener("click",()=>document.getElementById("loadFile").click());
+document.getElementById("loadFile").addEventListener("change",e=>{if(e.target.files[0])loadStateFile(e.target.files[0]);e.target.value="";});
+
+/* Datei per Drag & Drop laden */
+const dropEl=document.getElementById("dropOverlay");
+let dragDepth=0;
+const isFileDrag=e=>e.dataTransfer&&Array.from(e.dataTransfer.types||[]).includes("Files");
+window.addEventListener("dragenter",e=>{if(!isFileDrag(e))return;e.preventDefault();dragDepth++;dropEl.hidden=false;});
+window.addEventListener("dragover",e=>{if(!isFileDrag(e))return;e.preventDefault();});
+window.addEventListener("dragleave",e=>{if(!isFileDrag(e))return;dragDepth=Math.max(0,dragDepth-1);if(dragDepth===0)dropEl.hidden=true;});
+window.addEventListener("drop",e=>{if(!isFileDrag(e))return;e.preventDefault();dragDepth=0;dropEl.hidden=true;const f=e.dataTransfer.files[0];if(f)loadStateFile(f);});
+
+/* ===================== Diagramm vergrößern ===================== */
+function openChartModal(title,svg){
+  document.getElementById("modalTitle").textContent=title||"";
+  document.getElementById("modalBody").innerHTML=svg;
+  document.getElementById("chartModal").hidden=false;
+}
+function closeModal(){document.getElementById("chartModal").hidden=true;document.getElementById("modalBody").innerHTML="";}
+["sweepChart","amortChart","monthlyChart","dayChart"].forEach(id=>{
+  const el=document.getElementById(id);if(!el)return;
+  el.classList.add("zoomable");el.title="Zum Vergrößern klicken";
+  el.addEventListener("click",()=>{
+    const card=el.closest(".card");const t=card?card.querySelector(".chartT"):null;
+    openChartModal(t?t.textContent:"",el.innerHTML);
+  });
+});
+document.getElementById("modalClose").addEventListener("click",closeModal);
+document.getElementById("chartModal").addEventListener("click",e=>{if(e.target.id==="chartModal")closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+
+document.querySelectorAll("#panel-calc input,#panel-calc select").forEach(el=>el.addEventListener("input",render));
+["batCap","batPrice"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+
+/* ---- E-Auto / Wärmepumpe Toggles ---- */
+document.getElementById("evToggle").addEventListener("change",e=>{
+  document.getElementById("evSection").classList.toggle("open",e.target.checked);render();});
+document.getElementById("hpToggle").addEventListener("change",e=>{
+  document.getElementById("hpSection").classList.toggle("open",e.target.checked);render();});
+document.getElementById("hpReplaceToggle").addEventListener("change",e=>{
+  document.getElementById("hpCompareSection").classList.toggle("open",e.target.checked);render();});
+document.getElementById("hpOldFuel").addEventListener("change",e=>{
+  const price={gas:0.11,oel:0.115,pellets:0.075,fern:0.13,strom:0.32}[e.target.value];
+  if(price!=null)document.getElementById("hpOldPrice").value=price;
+  render();});
+document.getElementById("limit70Toggle").addEventListener("change",render);
+
+/* ---- Erweiterte Einstellungen Akkordeon ---- */
+document.getElementById("advToggle").addEventListener("click",()=>{
+  const toggle=document.getElementById("advToggle");
+  const body=document.getElementById("advBody");
+  toggle.classList.toggle("open");
+  body.classList.toggle("open");
+});
+
+/* ---- PDF / Drucken ---- */
+function prow(label,val){return `<div class="p-row"><span>${label}</span><span>${val}</span></div>`;}
+
+function buildDayProfile(prof,season){
+  const [sm,sd]=SEASON_DAY[season]||SEASON_DAY["Sommer"];
+  const start=(DIM.slice(0,sm).reduce((a,b)=>a+b,0)+(sd-1))*24;
+  const maxP=battery*BAT_C_RATE;let soc=battery*BAT_START_SOC;const pts=[];
+  for(let h=0;h<24;h++){
+    const g=prof.gen[start+h],l=prof.load[start+h],du=Math.min(g,l);let sur=g-du,def=l-du;
+    if(sur>0&&battery>0){const c=Math.min(sur,maxP,(battery-soc)/BAT_EFF_IN);soc+=c*BAT_EFF_IN;}
+    if(def>0&&battery>0){const dis=Math.min(def,maxP,soc*BAT_EFF_OUT);soc-=dis/BAT_EFF_OUT;}
+    pts.push({h,Erzeugung:+g.toFixed(2),Verbrauch:+l.toFixed(2),Speicher:+soc.toFixed(2)});
+  }
+  return pts;
+}
+
+function populatePrintView(){
+  const p=readParams();
+  const moduleWp=parseFloat(document.getElementById("moduleWp").value)||0;
+  p.kWp=strings.reduce((a,s)=>a+(parseFloat(s.modules)||0)*moduleWp/1000,0);
+  const prof=buildProfiles(strings,moduleWp,p.region,p.annualConsumption,p);
+  const feedCap=p.limit70?p.kWp*EEG_FEED_CAP_FRAC:Infinity;
+  const sweep=SIZES.map(c=>{const sim=simulate(prof.gen,prof.load,c,feedCap);return {...sim,...economics(sim,p,c)};});
+  const cur={...simulate(prof.gen,prof.load,battery,feedCap)};Object.assign(cur,economics(cur,p,battery,prof.gen,prof.load,feedCap));
+  const totalYield=strings.reduce((a,s)=>a+specificYield(p.baseYield,azResolve(s).f,parseFloat(s.tilt)||0)*((parseFloat(s.modules)||0)*moduleWp/1000),0);
+  const co2=cur.totalGen*p.co2Factor/1000;
+
+  // Datum
+  const d=new Date();
+  document.getElementById("printDate").textContent=`Erstellt am ${d.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"})}`;
+
+  // Empfehlung
+  const rec=recommendSize(sweep,p);
+  document.getElementById("printRecVal").textContent=rec+" kWh";
+  document.getElementById("printRecText").textContent=rec===0
+    ?"Kein Speicher amortisiert sich innerhalb der EEG-Dauer."
+    :"Größte Stufe, deren zusätzliche kWh sich noch innerhalb der EEG-Dauer rechnet.";
+  document.getElementById("printRecBat").innerHTML=`Gewählte Simulation: <b>${battery} kWh</b>`;
+
+  // KPIs
+  document.getElementById("printKpis").innerHTML=[
+    ["Autarkiegrad",pct(cur.autarkie),"#2E7D5B",`bei ${battery} kWh Speicher`],
+    ["Eigenverbrauch",pct(cur.eigen),"#C8791A","der Erzeugung"],
+    ["Ersparnis Jahr 1",eur(cur.sav1),"#3E6B8C","pro Jahr"],
+    ["Amortisation",cur.pay?fmt(cur.pay,1)+" J.":"> "+p.period+" J.","#B5543A",`Invest ${eur(cur.inv)}`],
+  ].map(([l,v,c,sb])=>`<div class="p-kpi"><div class="lab">${l}</div><div class="val" style="color:${c}">${v}</div><div class="sb">${sb}</div></div>`).join("")+
+  (p.evActive||p.hpActive?`<div class="p-kpi"><div class="lab">Gesamtverbrauch</div><div class="val" style="font-size:13px;color:#1A1A17">${fmt(p.totalConsumption)} kWh</div><div class="sb">inkl.${p.evActive?" E-Auto":""}${p.hpActive?" WP":""}</div></div>`:"");
+
+  // Einspeise-Leiste (Print)
+  const feedPctP=cur.totalGen>0?cur.feed/cur.totalGen:0;
+  const feedEur1P=cur.feed*p.feedInTariff;
+  document.getElementById("printFeedKwh").textContent=fmt(cur.feed)+" kWh";
+  document.getElementById("printFeedKwhPct").textContent="ca. "+fmt(feedPctP*100,0)+" % der Erzeugung";
+  document.getElementById("printFeedEur").textContent=eur(feedEur1P);
+  document.getElementById("printFeedEurSub").textContent="à "+fmt(p.feedInTariff,3)+" €/kWh · EEG";
+  const selfPctP=cur.totalGen>0?cur.self/cur.totalGen:0;
+  document.getElementById("printSelfKwh").textContent=fmt(cur.self)+" kWh";
+  document.getElementById("printSelfPct").textContent="ca. "+fmt(selfPctP*100,0)+" % der Erzeugung";
+  document.getElementById("printSelfEur").textContent=eur(cur.self*p.gridPrice);
+  document.getElementById("printSelfEurSub").textContent="à "+fmt(p.gridPrice,2)+" €/kWh · verm. Netzbezug";
+
+  // Anlage – Gesamt-Zeile gelb hinterlegt + fett
+  document.getElementById("printAnlage").innerHTML=
+    prow("Standort",p.plzResolved?`PLZ ${p.plz} · ${regionFromYield(p.baseYield)}`:p.region)+
+    prow("Spez. Ertrag (Basis)",fmt(p.baseYield)+" kWh/kWp·a")+
+    strings.map((s,i)=>`<div class="p-row"><span>String ${i+1}</span><span>${((parseFloat(s.modules)||0)*moduleWp/1000).toFixed(2)} kWp · ${azLabel(s)} · ${s.tilt}°</span></div>`).join("")+
+    `<div class="p-row" style="background:#E8A92F;border-radius:3px;padding:1px 4px;font-weight:700;color:#5a3800;margin:2px 0;"><span>Gesamt</span><span>${fmt(p.kWp,2)} kWp</span></div>`+
+    prow("Jahresertrag",fmt(totalYield)+" kWh/a")+
+    prow("⌀ Spez. Ertrag",p.kWp>0?fmt(totalYield/p.kWp)+" kWh/kWp·a":"–");
+
+  // Heizvergleich (Print): Marginal-PV-Anteil wie auf dem Bildschirm
+  let hpCompareRow="";
+  const hcP=heatCompare(p,strings,moduleWp,battery,feedCap,cur);
+  if(hcP){
+    const fuelShort={gas:"Gas",oel:"Öl",pellets:"Pellets",fern:"Fernw.",strom:"Strom"}[p.hpOldFuel]||"alt";
+    hpCompareRow=prow("Heizvergleich",`${fuelShort} ${eur(hcP.oldY1)}/a · WP m. PV ${eur(hcP.wpPvY1)}/a`);
+  }
+
+  // Tarif
+  document.getElementById("printTarif").innerHTML=
+    prow("Haushalt",fmt(p.annualConsumption)+" kWh")+
+    (p.evActive?prow("E-Auto",fmt(p.evKwhActive)+" kWh · "+({solar:"Überschuss",night:"Nacht",mixed:"Gemischt"}[p.evStrategy]||"")):"") +
+    (p.hpActive?prow("Wärmepumpe",fmt(p.hpKwh)+" kWh (COP "+fmt(p.hpCop,1)+")"):"") +
+    hpCompareRow +
+    (p.evActive||p.hpActive?prow("Gesamt",fmt(p.totalConsumption)+" kWh"):"") +
+    prow("Strompreis",fmt(p.gridPrice,2)+" €/kWh")+
+    prow("Einspeisung",fmt(p.feedInTariff,3)+" €/kWh")+
+    prow("Preissteigerung",fmt(p.priceInc,1)+" %/Jahr");
+
+  // Kosten
+  document.getElementById("printKosten").innerHTML=
+    prow("Anlage",eur(p.costPerKwp)+" /kWp")+
+    prow("Speicher",eur(p.batteryCostPerKwh)+" /kWh")+
+    prow("Förderung",eur(p.foerderung))+
+    prow("Investition gesamt",eur(cur.inv))+
+    prow("Zeitraum",p.period+" Jahre")+
+    prow("EEG-Dauer",p.eegDuration+" Jahre")+
+    prow("PV-Degradation",fmt(p.degradation,1)+" %/Jahr")+
+    (Math.abs(p.batDegradation-2.0)>0.001?prow("Speicher-Degradation",fmt(p.batDegradation,1)+" %/Jahr"):"")+
+    (Math.abs(p.inverterEff-97)>0.001?prow("WR-Wirkungsgrad",fmt(p.inverterEff,1)+" %"):"")+
+    (Math.abs(p.opCost-150)>0.001?prow("Betriebskosten",eur(p.opCost)+" /Jahr"):"")+
+    (p.co2Factor>0?prow("CO₂-Einsparung",fmt(co2)+" kg/a"):"");
+
+  // --- Chart-Höhen ---
+  const CH_SWEEP  = 200; // Sweep: volle Breite
+  const CH_AMORT  = 110; // Amortisation: halbe Breite
+  const CH_MONTHLY= 110; // Monatschart: halbe Breite
+  const CH_DAY    = 100; // Tagesprofile: je Quartal halbe Breite
+
+  // Sweep – volle Breite, kompakte Höhe
+  document.getElementById("printSweep").innerHTML=sweepChart(sweep,battery,CH_SWEEP);
+
+  // Amortisation – halbe Breite rechts
+  document.getElementById("printAmortTitle").textContent=`Amortisation über ${p.period} Jahre · ${battery} kWh`;
+  document.getElementById("printAmort").innerHTML=lineChart(cur.cf,"year",
+    [{key:"k",color:"#3E6B8C"},{key:"ref",color:"#B5543A",dash:true}],{h:CH_AMORT,yfmt:v=>fmt(v/1000)+"k",xfmt:v=>v,vline:cur.pay?Math.round(cur.pay):null,vlabel:"Break-even"});
+  document.getElementById("printAmortStats").innerHTML=
+    `<span><i style="display:inline-block;width:10px;height:2px;background:#3E6B8C;margin-right:4px;vertical-align:middle"></i>Cashflow PV</span>`+
+    `<span><i style="display:inline-block;width:10px;height:0;margin-right:4px;vertical-align:middle;border-top:2px dashed #B5543A"></i>Stromkosten ohne PV</span>`+
+    `<span>Gewinn nach ${p.period} J.: <b style="color:${cur.profit>=0?"#2E7D5B":"#B5543A"}">${eur(cur.profit)}</b></span>`+
+    (p.co2Factor>0?`<span>CO₂-Einsparung: <b>${fmt(co2)} kg/a</b></span>`:"");
+
+  // Monatschart – volle Breite
+  const monthly=MN.map(name=>({name,Erzeugung:0,Verbrauch:0}));
+  let idx2=0;
+  for(let m=0;m<12;m++)for(let d2=0;d2<DIM[m];d2++)for(let h=0;h<24;h++){monthly[m].Erzeugung+=prof.gen[idx2];monthly[m].Verbrauch+=prof.load[idx2];idx2++;}
+  document.getElementById("printMonthly").innerHTML=lineChart(monthly,"name",
+    [{key:"Erzeugung",color:"#E8A92F",area:true},{key:"Verbrauch",color:"#3E6B8C",area:true}],{h:CH_MONTHLY,yfmt:v=>fmt(v),yunit:"kWh"});
+
+  // Tagesprofil – alle 4 Jahreszeiten
+  const DAY_SERIES=[{key:"Erzeugung",color:"#E8A92F"},{key:"Verbrauch",color:"#3E6B8C"},{key:"Speicher",color:"#2E7D5B",dash:true}];
+  const DAY_OPTS={h:CH_DAY,yfmt:v=>fmt(v,1),xfmt:v=>v+"h",yunit:"kWh"};
+  ["Frühling","Sommer","Herbst","Winter"].forEach(s=>{
+    const pts=buildDayProfile(prof,s);
+    const id="printDay"+s.replace("ü","ue").replace("ö","oe");
+    const el=document.getElementById(id);
+    if(el)el.innerHTML=lineChart(pts,"h",DAY_SERIES,DAY_OPTS);
+  });
+}
+
+document.getElementById("pdfBtn").addEventListener("click",()=>{
+  document.getElementById("panel-calc").hidden=false;
+  document.getElementById("panel-costs").hidden=true;
+  populatePrintView();
+  setTimeout(()=>window.print(),150);
+});
+
+renderStrings();
+renderCosts();
+render();
+</script>
+</body>
+</html>
