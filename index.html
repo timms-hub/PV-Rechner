@@ -3,15 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- ═══ Icons & PWA ═══ -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIj4KICA8cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI2IiBmaWxsPSIjMWExZjJlIi8+CiAgPGNpcmNsZSBjeD0iMjUiIGN5PSI1IiByPSIzIiBmaWxsPSIjZjVjODQyIiBvcGFjaXR5PSIwLjk1Ii8+CiAgPHJlY3QgeD0iMyIgeT0iMTAiIHdpZHRoPSIyNSIgaGVpZ2h0PSIxNiIgcng9IjQiIGZpbGw9IiMyYTNhNWUiLz4KICA8bGluZSB4MT0iMTEuMCIgeTE9IjEwIiB4Mj0iMTEuMCIgeTI9IjI2IiBzdHJva2U9IiM0YTZmYTUiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC44Ii8+CiAgPGxpbmUgeDE9IjIwLjAiIHkxPSIxMCIgeDI9IjIwLjAiIHkyPSIyNiIgc3Ryb2tlPSIjNGE2ZmE1IiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuOCIvPgogIDxsaW5lIHgxPSIzIiB5MT0iMTcuNSIgeDI9IjI4IiB5Mj0iMTcuNSIgc3Ryb2tlPSIjNGE2ZmE1IiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuOCIvPgogIDxyZWN0IHg9IjQuMCIgeT0iMTEuMCIgd2lkdGg9IjcuMCIgaGVpZ2h0PSI2LjUiIHJ4PSIyIiBmaWxsPSIjM2E1YThhIiBvcGFjaXR5PSIwLjU1Ii8+CjxyZWN0IHg9IjEzLjAiIHk9IjExLjAiIHdpZHRoPSI3LjAiIGhlaWdodD0iNi41IiByeD0iMiIgZmlsbD0iIzNhNWE4YSIgb3BhY2l0eT0iMC41NSIvPgo8cmVjdCB4PSIyMi4wIiB5PSIxMS4wIiB3aWR0aD0iNy4wIiBoZWlnaHQ9IjYuNSIgcng9IjIiIGZpbGw9IiMzYTVhOGEiIG9wYWNpdHk9IjAuNTUiLz4KPHJlY3QgeD0iNC4wIiB5PSIxOS41IiB3aWR0aD0iNy4wIiBoZWlnaHQ9IjYuNSIgcng9IjIiIGZpbGw9IiMzYTVhOGEiIG9wYWNpdHk9IjAuMzUiLz4KPHJlY3QgeD0iMTMuMCIgeT0iMTkuNSIgd2lkdGg9IjcuMCIgaGVpZ2h0PSI2LjUiIHJ4PSIyIiBmaWxsPSIjM2E1YThhIiBvcGFjaXR5PSIwLjM1Ii8+CjxyZWN0IHg9IjIyLjAiIHk9IjE5LjUiIHdpZHRoPSI3LjAiIGhlaWdodD0iNi41IiByeD0iMiIgZmlsbD0iIzNhNWE4YSIgb3BhY2l0eT0iMC4zNSIvPgoKICA8cGF0aCB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMC45NiwxMi4yNCkgc2NhbGUoMC4wMjI1KSIKICAgIGQ9Ik0zNDkuNCA0NC42YzUuOS0xMy43IDEuNS0yOS43LTEwLjYtMzguNXMtMjguNi04LTM5LjkgMS44bC0yNTYgMjI0Yy0xMCA4LjgtMTMuNiAyMS45LTkuMSAzNC4xUzUwLjcgMjg4IDY0IDI4OGgxMTEuNUw5OC42IDQ2Ny40Yy01LjkgMTMuNy0xLjUgMjkuNyAxMC42IDM4LjVzMjguNiA4IDM5LjktMS44bDI1Ni0yMjRjMTAtOC44IDEzLjYtMjEuOSA5LjEtMzQuMXMtMTYtMTguNi0yOS4zLTE4LjZIMjgzLjhMMzQ5LjQgNDQuNnoiIGZpbGw9IiNmNWM4NDIiLz4KPC9zdmc+">
-  <link rel="apple-touch-icon" href="data:image/png;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzMiIgZmlsbD0iIzFhMWYyZSIvPgogIDxjaXJjbGUgY3g9IjE0MCIgY3k9IjI5IiByPSIxOCIgZmlsbD0iI2Y1Yzg0MiIgb3BhY2l0eT0iMC45NSIvPgogIDxyZWN0IHg9IjIwIiB5PSI1OCIgd2lkdGg9IjE0MCIgaGVpZ2h0PSI5MCIgcng9IjQiIGZpbGw9IiMyYTNhNWUiLz4KICA8bGluZSB4MT0iNjYuMyIgeTE9IjU4IiB4Mj0iNjYuMyIgeTI9IjE0OCIgc3Ryb2tlPSIjNGE2ZmE1IiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuOCIvPgogIDxsaW5lIHgxPSIxMTMuNyIgeTE9IjU4IiB4Mj0iMTEzLjciIHkyPSIxNDgiIHN0cm9rZT0iIzRhNmZhNSIgc3Ryb2tlLXdpZHRoPSIxIiBvcGFjaXR5PSIwLjgiLz4KICA8bGluZSB4MT0iMjAiIHkxPSIxMDIuNSIgeDI9IjE2MCIgeTI9IjEwMi41IiBzdHJva2U9IiM0YTZmYTUiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iMC44Ii8+CiAgPHJlY3QgeD0iMjEuMCIgeT0iNTkuMCIgd2lkdGg9IjQ1LjMiIGhlaWdodD0iNDMuNSIgcng9IjIiIGZpbGw9IiMzYTVhOGEiIG9wYWNpdHk9IjAuNTUiLz4KPHJlY3QgeD0iNjguMyIgeT0iNTkuMCIgd2lkdGg9IjQ1LjMiIGhlaWdodD0iNDMuNSIgcng9IjIiIGZpbGw9IiMzYTVhOGEiIG9wYWNpdHk9IjAuNTUiLz4KPHJlY3QgeD0iMTE1LjciIHk9IjU5LjAiIHdpZHRoPSI0NS4zIiBoZWlnaHQ9IjQzLjUiIHJ4PSIyIiBmaWxsPSIjM2E1YThhIiBvcGFjaXR5PSIwLjU1Ii8+CjxyZWN0IHg9IjIxLjAiIHk9IjEwNC41IiB3aWR0aD0iNDUuMyIgaGVpZ2h0PSI0My41IiByeD0iMiIgZmlsbD0iIzNhNWE4YSIgb3BhY2l0eT0iMC4zNSIvPgo8cmVjdCB4PSI2OC4zIiB5PSIxMDQuNSIgd2lkdGg9IjQ1LjMiIGhlaWdodD0iNDMuNSIgcng9IjIiIGZpbGw9IiMzYTVhOGEiIG9wYWNpdHk9IjAuMzUiLz4KPHJlY3QgeD0iMTE1LjciIHk9IjEwNC41IiB3aWR0aD0iNDUuMyIgaGVpZ2h0PSI0My41IiByeD0iMiIgZmlsbD0iIzNhNWE4YSIgb3BhY2l0eT0iMC4zNSIvPgoKICA8cGF0aCB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2MS42NSw3MC42MCkgc2NhbGUoMC4xMjY2KSIKICAgIGQ9Ik0zNDkuNCA0NC42YzUuOS0xMy43IDEuNS0yOS43LTEwLjYtMzguNXMtMjguNi04LTM5LjkgMS44bC0yNTYgMjI0Yy0xMCA4LjgtMTMuNiAyMS45LTkuMSAzNC4xUzUwLjcgMjg4IDY0IDI4OGgxMTEuNUw5OC42IDQ2Ny40Yy01LjkgMTMuNy0xLjUgMjkuNyAxMC42IDM4LjVzMjguNiA4IDM5LjktMS44bDI1Ni0yMjRjMTAtOC44IDEzLjYtMjEuOSA5LjEtMzQuMXMtMTYtMTguNi0yOS4zLTE4LjZIMjgzLjhMMzQ5LjQgNDQuNnoiIGZpbGw9IiNmNWM4NDIiLz4KPC9zdmc+">
-  <meta name="theme-color" content="#1a1f2e">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="PV-Rechner">
-  <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjogIlBWLVJlY2huZXIiLCAic2hvcnRfbmFtZSI6ICJQVi1SZWNobmVyIiwgImRlc2NyaXB0aW9uIjogIldpcnRzY2hhZnRsaWNoa2VpdHNyZWNobmVyIGZcdTAwZmNyIFBob3Rvdm9sdGFpay1BbmxhZ2VuIiwgInN0YXJ0X3VybCI6ICIuIiwgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxYTFmMmUiLCAidGhlbWVfY29sb3IiOiAiIzFhMWYyZSIsICJpY29ucyI6IFt7InNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE9USWdNVGt5SWlCM2FXUjBhRDBpTVRreUlpQm9aV2xuYUhROUlqRTVNaUkrQ2lBZ1BISmxZM1FnZDJsa2RHZzlJakU1TWlJZ2FHVnBaMmgwUFNJeE9USWlJSEo0UFNJek5TSWdabWxzYkQwaUl6RmhNV1l5WlNJdlBnb2dJRHhqYVhKamJHVWdZM2c5SWpFMU1DSWdZM2s5SWpNeElpQnlQU0l4T1NJZ1ptbHNiRDBpSTJZMVl6ZzBNaUlnYjNCaFkybDBlVDBpTUM0NU5TSXZQZ29nSUR4eVpXTjBJSGc5SWpJeElpQjVQU0kyTVNJZ2QybGtkR2c5SWpFMU1DSWdhR1ZwWjJoMFBTSTVOaUlnY25nOUlqUWlJR1pwYkd3OUlpTXlZVE5oTldVaUx6NEtJQ0E4YkdsdVpTQjRNVDBpTnpBdU55SWdlVEU5SWpZeElpQjRNajBpTnpBdU55SWdlVEk5SWpFMU55SWdjM1J5YjJ0bFBTSWpOR0UyWm1FMUlpQnpkSEp2YTJVdGQybGtkR2c5SWpFaUlHOXdZV05wZEhrOUlqQXVPQ0l2UGdvZ0lEeHNhVzVsSUhneFBTSXhNakV1TXlJZ2VURTlJall4SWlCNE1qMGlNVEl4TGpNaUlIa3lQU0l4TlRjaUlITjBjbTlyWlQwaUl6UmhObVpoTlNJZ2MzUnliMnRsTFhkcFpIUm9QU0l4SWlCdmNHRmphWFI1UFNJd0xqZ2lMejRLSUNBOGJHbHVaU0I0TVQwaU1qRWlJSGt4UFNJeE1EZ3VOU0lnZURJOUlqRTNNU0lnZVRJOUlqRXdPQzQxSWlCemRISnZhMlU5SWlNMFlUWm1ZVFVpSUhOMGNtOXJaUzEzYVdSMGFEMGlNU0lnYjNCaFkybDBlVDBpTUM0NElpOCtDaUFnUEhKbFkzUWdlRDBpTWpJdU1DSWdlVDBpTmpJdU1DSWdkMmxrZEdnOUlqUTRMamNpSUdobGFXZG9kRDBpTkRZdU5TSWdjbmc5SWpJaUlHWnBiR3c5SWlNellUVmhPR0VpSUc5d1lXTnBkSGs5SWpBdU5UVWlMejRLUEhKbFkzUWdlRDBpTnpJdU55SWdlVDBpTmpJdU1DSWdkMmxrZEdnOUlqUTRMamNpSUdobGFXZG9kRDBpTkRZdU5TSWdjbmc5SWpJaUlHWnBiR3c5SWlNellUVmhPR0VpSUc5d1lXTnBkSGs5SWpBdU5UVWlMejRLUEhKbFkzUWdlRDBpTVRJekxqTWlJSGs5SWpZeUxqQWlJSGRwWkhSb1BTSTBPQzQzSWlCb1pXbG5hSFE5SWpRMkxqVWlJSEo0UFNJeUlpQm1hV3hzUFNJak0yRTFZVGhoSWlCdmNHRmphWFI1UFNJd0xqVTFJaTgrQ2p4eVpXTjBJSGc5SWpJeUxqQWlJSGs5SWpFeE1DNDFJaUIzYVdSMGFEMGlORGd1TnlJZ2FHVnBaMmgwUFNJME5pNDFJaUJ5ZUQwaU1pSWdabWxzYkQwaUl6TmhOV0U0WVNJZ2IzQmhZMmwwZVQwaU1DNHpOU0l2UGdvOGNtVmpkQ0I0UFNJM01pNDNJaUI1UFNJeE1UQXVOU0lnZDJsa2RHZzlJalE0TGpjaUlHaGxhV2RvZEQwaU5EWXVOU0lnY25nOUlqSWlJR1pwYkd3OUlpTXpZVFZoT0dFaUlHOXdZV05wZEhrOUlqQXVNelVpTHo0S1BISmxZM1FnZUQwaU1USXpMak1pSUhrOUlqRXhNQzQxSWlCM2FXUjBhRDBpTkRndU55SWdhR1ZwWjJoMFBTSTBOaTQxSWlCeWVEMGlNaUlnWm1sc2JEMGlJek5oTldFNFlTSWdiM0JoWTJsMGVUMGlNQzR6TlNJdlBnb0tJQ0E4Y0dGMGFDQjBjbUZ1YzJadmNtMDlJblJ5WVc1emJHRjBaU2cyTlM0M05pdzNOQzQwTkNrZ2MyTmhiR1VvTUM0eE16VXdLU0lLSUNBZ0lHUTlJazB6TkRrdU5DQTBOQzQyWXpVdU9TMHhNeTQzSURFdU5TMHlPUzQzTFRFd0xqWXRNemd1TlhNdE1qZ3VOaTA0TFRNNUxqa2dNUzQ0YkMweU5UWWdNakkwWXkweE1DQTRMamd0TVRNdU5pQXlNUzQ1TFRrdU1TQXpOQzR4VXpVd0xqY2dNamc0SURZMElESTRPR2d4TVRFdU5VdzVPQzQySURRMk55NDBZeTAxTGprZ01UTXVOeTB4TGpVZ01qa3VOeUF4TUM0MklETTRMalZ6TWpndU5pQTRJRE01TGprdE1TNDRiREkxTmkweU1qUmpNVEF0T0M0NElERXpMall0TWpFdU9TQTVMakV0TXpRdU1YTXRNVFl0TVRndU5pMHlPUzR6TFRFNExqWklNamd6TGpoTU16UTVMalFnTkRRdU5ub2lJR1pwYkd3OUlpTm1OV000TkRJaUx6NEtQQzl6ZG1jKyIsICJzaXplcyI6ICIxOTJ4MTkyIiwgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCJ9LCB7InNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBMU1USWdOVEV5SWlCM2FXUjBhRDBpTlRFeUlpQm9aV2xuYUhROUlqVXhNaUkrQ2lBZ1BISmxZM1FnZDJsa2RHZzlJalV4TWlJZ2FHVnBaMmgwUFNJMU1USWlJSEo0UFNJNU1pSWdabWxzYkQwaUl6RmhNV1l5WlNJdlBnb2dJRHhqYVhKamJHVWdZM2c5SWpNNU9TSWdZM2s5SWpneUlpQnlQU0kxTVNJZ1ptbHNiRDBpSTJZMVl6ZzBNaUlnYjNCaFkybDBlVDBpTUM0NU5TSXZQZ29nSUR4eVpXTjBJSGc5SWpVMklpQjVQU0l4TmpRaUlIZHBaSFJvUFNJek9Ua2lJR2hsYVdkb2REMGlNalUySWlCeWVEMGlOQ0lnWm1sc2JEMGlJekpoTTJFMVpTSXZQZ29nSUR4c2FXNWxJSGd4UFNJeE9EZ3VOeUlnZVRFOUlqRTJOQ0lnZURJOUlqRTRPQzQzSWlCNU1qMGlOREl3SWlCemRISnZhMlU5SWlNMFlUWm1ZVFVpSUhOMGNtOXJaUzEzYVdSMGFEMGlNU0lnYjNCaFkybDBlVDBpTUM0NElpOCtDaUFnUEd4cGJtVWdlREU5SWpNeU1pNHpJaUI1TVQwaU1UWTBJaUI0TWowaU16SXlMak1pSUhreVBTSTBNakFpSUhOMGNtOXJaVDBpSXpSaE5tWmhOU0lnYzNSeWIydGxMWGRwWkhSb1BTSXhJaUJ2Y0dGamFYUjVQU0l3TGpnaUx6NEtJQ0E4YkdsdVpTQjRNVDBpTlRZaUlIa3hQU0l5T1RFdU5TSWdlREk5SWpRMU5TSWdlVEk5SWpJNU1TNDFJaUJ6ZEhKdmEyVTlJaU0wWVRabVlUVWlJSE4wY205clpTMTNhV1IwYUQwaU1TSWdiM0JoWTJsMGVUMGlNQzQ0SWk4K0NpQWdQSEpsWTNRZ2VEMGlOVGN1TUNJZ2VUMGlNVFkxTGpBaUlIZHBaSFJvUFNJeE16RXVOeUlnYUdWcFoyaDBQU0l4TWpZdU5TSWdjbmc5SWpJaUlHWnBiR3c5SWlNellUVmhPR0VpSUc5d1lXTnBkSGs5SWpBdU5UVWlMejRLUEhKbFkzUWdlRDBpTVRrd0xqY2lJSGs5SWpFMk5TNHdJaUIzYVdSMGFEMGlNVE14TGpjaUlHaGxhV2RvZEQwaU1USTJMalVpSUhKNFBTSXlJaUJtYVd4c1BTSWpNMkUxWVRoaElpQnZjR0ZqYVhSNVBTSXdMalUxSWk4K0NqeHlaV04wSUhnOUlqTXlOQzR6SWlCNVBTSXhOalV1TUNJZ2QybGtkR2c5SWpFek1TNDNJaUJvWldsbmFIUTlJakV5Tmk0MUlpQnllRDBpTWlJZ1ptbHNiRDBpSXpOaE5XRTRZU0lnYjNCaFkybDBlVDBpTUM0MU5TSXZQZ284Y21WamRDQjRQU0kxTnk0d0lpQjVQU0l5T1RNdU5TSWdkMmxrZEdnOUlqRXpNUzQzSWlCb1pXbG5hSFE5SWpFeU5pNDFJaUJ5ZUQwaU1pSWdabWxzYkQwaUl6TmhOV0U0WVNJZ2IzQmhZMmwwZVQwaU1DNHpOU0l2UGdvOGNtVmpkQ0I0UFNJeE9UQXVOeUlnZVQwaU1qa3pMalVpSUhkcFpIUm9QU0l4TXpFdU55SWdhR1ZwWjJoMFBTSXhNall1TlNJZ2NuZzlJaklpSUdacGJHdzlJaU16WVRWaE9HRWlJRzl3WVdOcGRIazlJakF1TXpVaUx6NEtQSEpsWTNRZ2VEMGlNekkwTGpNaUlIazlJakk1TXk0MUlpQjNhV1IwYUQwaU1UTXhMamNpSUdobGFXZG9kRDBpTVRJMkxqVWlJSEo0UFNJeUlpQm1hV3hzUFNJak0yRTFZVGhoSWlCdmNHRmphWFI1UFNJd0xqTTFJaTgrQ2dvZ0lEeHdZWFJvSUhSeVlXNXpabTl5YlQwaWRISmhibk5zWVhSbEtERTNOUzR6Tml3eE9Ua3VPRFFwSUhOallXeGxLREF1TXpZd01Da2lDaUFnSUNCa1BTSk5NelE1TGpRZ05EUXVObU0xTGprdE1UTXVOeUF4TGpVdE1qa3VOeTB4TUM0MkxUTTRMalZ6TFRJNExqWXRPQzB6T1M0NUlERXVPR3d0TWpVMklESXlOR010TVRBZ09DNDRMVEV6TGpZZ01qRXVPUzA1TGpFZ016UXVNVk0xTUM0M0lESTRPQ0EyTkNBeU9EaG9NVEV4TGpWTU9UZ3VOaUEwTmpjdU5HTXROUzQ1SURFekxqY3RNUzQxSURJNUxqY2dNVEF1TmlBek9DNDFjekk0TGpZZ09DQXpPUzQ1TFRFdU9Hd3lOVFl0TWpJMFl6RXdMVGd1T0NBeE15NDJMVEl4TGprZ09TNHhMVE0wTGpGekxURTJMVEU0TGpZdE1qa3VNeTB4T0M0MlNESTRNeTQ0VERNME9TNDBJRFEwTGpaNklpQm1hV3hzUFNJalpqVmpPRFF5SWk4K0Nqd3ZjM1puUGc9PSIsICJzaXplcyI6ICI1MTJ4NTEyIiwgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIsICJwdXJwb3NlIjogIm1hc2thYmxlIGFueSJ9XX0=">
 <title>PV-Speicher-Kalkulator</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=Spline+Sans:wght@400;500;600&display=swap');
@@ -317,6 +308,42 @@
           <div class="field"><label>Einspeisung (€/kWh)</label><input id="feedInTariff" type="number" step="0.001" value="0.07"></div>
           <div class="field"><label>Strompreis +%/Jahr</label><input id="priceInc" type="number" step="0.1" value="3.0"></div>
         </div>
+        <div style="display:grid;gap:10px;margin-top:10px;">
+          <div class="field"><label id="loadDayLabel">Tagesprofil Verbrauch</label>
+            <select id="loadDay">
+              <option value="standard">Morgen + Abend (Standard)</option>
+              <option value="morgens">Eher morgens</option>
+              <option value="abends">Eher abends</option>
+              <option value="gleich">Gleichmäßig (tagsüber zuhause)</option>
+            </select>
+          </div>
+          <div class="field"><label>Jahresprofil Verbrauch</label>
+            <select id="loadSeason">
+              <option value="standard">Leicht winterlastig (Standard)</option>
+              <option value="winter">Stark winterlastig</option>
+              <option value="gleich">Gleichmäßig übers Jahr</option>
+            </select>
+          </div>
+        </div>
+        <div class="toggle-row" style="margin-top:10px;">
+          <label for="weekendToggle">Wochenende (Sa–So) separat</label>
+          <label class="toggle"><input type="checkbox" id="weekendToggle"><span class="slider"></span></label>
+        </div>
+        <div class="collapsible" id="weekendSection">
+          <div style="display:grid;gap:10px;">
+            <div class="field"><label>Tagesprofil Wochenende</label>
+              <select id="loadDayWe">
+                <option value="gleich">Gleichmäßig (tagsüber zuhause)</option>
+                <option value="standard">Morgen + Abend (Standard)</option>
+                <option value="morgens">Eher morgens</option>
+                <option value="abends">Eher abends</option>
+              </select>
+            </div>
+            <div class="field"><label>Wochenend-Mehrverbrauch (%)</label><input id="weekendExtra" type="number" step="5" value="10" placeholder="z.B. 10"></div>
+          </div>
+          <div class="note">Wochenende = Sa–So. Mehrverbrauch verschiebt kWh auf Sa/So; die Jahressumme bleibt gleich.</div>
+        </div>
+        <div class="note">Tagesprofil = wann verbraucht wird. „Eher abends" nutzt mehr Speicher, „tagsüber zuhause" mehr Direktstrom (Näherungswerte).</div>
         <div class="note">Einspeisevergütung ist gesetzlich geregelt und ändert sich – Wert vor Entscheidung prüfen.</div>
       </div>
 
@@ -663,8 +690,26 @@ const DIM=[31,28,31,30,31,30,31,31,30,31,30,31];
 const MN=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
 const PV_SHARE=[.030,.045,.080,.110,.125,.125,.125,.110,.090,.070,.050,.030];
 const DAYLIGHT=[8.3,9.9,11.8,13.8,15.5,16.3,15.9,14.5,12.6,10.7,9.0,7.9];
-const LOAD_SEASON=[1.12,1.10,1.05,.98,.93,.90,.90,.92,.96,1.02,1.08,1.12];
-const LOAD_DAY=[.025,.020,.018,.017,.018,.025,.040,.055,.050,.045,.045,.048,.050,.045,.042,.045,.055,.070,.080,.075,.065,.055,.045,.035];
+// Tagesprofile (24h-Form, wird auf Jahresverbrauch normiert) – "standard" = bisheriges Profil
+const LOAD_DAY_PROFILES={
+  standard:[.025,.020,.018,.017,.018,.025,.040,.055,.050,.045,.045,.048,.050,.045,.042,.045,.055,.070,.080,.075,.065,.055,.045,.035],
+  morgens: [.022,.018,.016,.015,.020,.045,.075,.090,.082,.065,.052,.046,.044,.040,.036,.036,.040,.046,.052,.048,.044,.038,.030,.025],
+  abends:  [.028,.022,.018,.016,.016,.022,.038,.048,.030,.022,.020,.022,.026,.024,.024,.030,.046,.072,.095,.090,.076,.060,.044,.034],
+  gleich:  [.030,.028,.026,.025,.026,.030,.038,.045,.048,.050,.052,.052,.052,.050,.048,.048,.050,.052,.052,.050,.046,.042,.038,.034]
+};
+// Jahresprofile (12 Monatsgewichte) – "standard" = bisheriges Profil
+const LOAD_SEASON_PROFILES={
+  standard:[1.12,1.10,1.05,.98,.93,.90,.90,.92,.96,1.02,1.08,1.12],
+  winter:  [1.32,1.22,1.08,.92,.80,.72,.72,.78,.90,1.06,1.22,1.34],
+  gleich:  [1,1,1,1,1,1,1,1,1,1,1,1]
+};
+const LOAD_SEASON=LOAD_SEASON_PROFILES.standard; // Fallback/Default (Länge 12 auch fürs EV-Saisongewicht genutzt)
+const LOAD_DAY=LOAD_DAY_PROFILES.standard;       // Fallback/Default
+// Wochentags-Logik (Annahme: 1. Januar = Montag). doy 0..364; 5=Sa,6=So
+const MONTH_START_DOY=(()=>{const a=[0];for(let m=0;m<11;m++)a.push(a[m]+DIM[m]);return a;})();
+function isWeekendDoy(doy){return (doy%7)>=5;}
+// Hour-Offset eines repräsentativen Werktags (Beispieltag für Tagesprofil-Charts)
+function repDayStart(month,dayMid){let day=dayMid;while(day>1&&isWeekendDoy(MONTH_START_DOY[month]+(day-1)))day--;return (MONTH_START_DOY[month]+(day-1))*24;}
 const REGION_YIELD={Nord:950,Mitte:1010,"Süd":1090};
 // Näherungstabelle: 2-stelliges PLZ-Präfix -> spez. Ertrag (kWh/kWp·a), gut ausgerichtete Anlage.
 // ACHTUNG: approximiert aus dem regionalen Einstrahlungsverlauf (Süd höher als Nord).
@@ -699,17 +744,6 @@ const AZ={
 };
 const AZ_OPTS=Object.keys(AZ);
 const SIZES=[0,3,5,8,10,12,15];
-
-/* ---- Modell-Konstanten (zentral, früher als Magic Numbers verstreut) ---- */
-const BAT_RT_EFF=0.9;                        // Round-Trip-Wirkungsgrad Speicher
-const BAT_EFF_IN=Math.sqrt(BAT_RT_EFF);      // Lade-Wirkungsgrad (√ des Round-Trip)
-const BAT_EFF_OUT=Math.sqrt(BAT_RT_EFF);     // Entlade-Wirkungsgrad
-const BAT_C_RATE=0.5;                        // Lade-/Entladeleistung als Anteil der Kapazität (0,5C)
-const BAT_START_SOC=0.3;                     // Start-Ladezustand für die Tagesprofil-Darstellung
-const EEG_FEED_CAP_FRAC=0.7;                 // §9 EEG: Einspeisebegrenzung auf 70 % der kWp
-// Repräsentativer Tag je Saison ([Monatsindex 0–11, Tag]) + Anzeigetitel – von Screen & Print genutzt
-const SEASON_DAY={"Frühling":[3,15],"Sommer":[5,15],"Herbst":[9,15],"Winter":[0,15]};
-const DAY_TITLE={"Frühling":"Frühlingstag","Sommer":"Sommertag","Herbst":"Herbsttag","Winter":"Wintertag"};
 
 function tiltFactor(t){const p=[[0,.91],[15,.97],[30,1],[45,.98],[60,.92],[90,.70]];
   for(let i=0;i<p.length-1;i++){const[a,fa]=p[i],[b,fb]=p[i+1];if(t>=a&&t<=b)return fa+(fb-fa)*(t-a)/(b-a);}return t<0?.91:.70;}
@@ -752,13 +786,27 @@ function buildProfiles(strings,moduleWp,region,cons,p){
       for(let d=0;d<DIM[m];d++)for(let h=0;h<24;h++){gen[idx]+=dg*hw[m][h]*invEff;idx++;}
     }
   });
-  // Haushaltsverbrauch
-  const daySum=LOAD_DAY.reduce((a,b)=>a+b,0);
-  const seasonSum=LOAD_SEASON.reduce((a,b,i)=>a+b*DIM[i],0);
-  let idx=0;
+  // Haushaltsverbrauch – wählbares Tages- und Jahresprofil, optional Werktag/Wochenende getrennt
+  const seasonP=(p&&LOAD_SEASON_PROFILES[p.loadSeason])||LOAD_SEASON_PROFILES.standard;
+  const seasonSum=seasonP.reduce((a,b,i)=>a+b*DIM[i],0);
+  const wkdP=(p&&LOAD_DAY_PROFILES[p.loadDay])||LOAD_DAY_PROFILES.standard;
+  const split=!!(p&&p.weekendSplit);
+  const wkndP=split?((p&&LOAD_DAY_PROFILES[p.loadDayWe])||LOAD_DAY_PROFILES.gleich):wkdP;
+  const weF=split?(1+((p&&p.weekendExtra)||0)/100):1; // Wochenend-Mehrverbrauch (Faktor pro Tag)
+  const wkdSum=wkdP.reduce((a,b)=>a+b,0), wkndSum=wkndP.reduce((a,b)=>a+b,0);
+  let idx=0,doy=0;
   for(let m=0;m<12;m++){
-    const dl=cons*LOAD_SEASON[m]/seasonSum;
-    for(let d=0;d<DIM[m];d++)for(let h=0;h<24;h++){load[idx]=dl*(LOAD_DAY[h]/daySum);idx++;}
+    // Werk-/Wochenendtage des Monats zählen, um die Monatsenergie korrekt zu splitten
+    let nWd=0,nWe=0;
+    for(let d=0;d<DIM[m];d++){ if(isWeekendDoy(doy+d))nWe++; else nWd++; }
+    const Emonth=cons*seasonP[m]*DIM[m]/seasonSum;     // Monatsenergie
+    const xWd=Emonth/(nWd+nWe*weF), xWe=xWd*weF;        // Werktag- bzw. Wochenendtag-Energie
+    for(let d=0;d<DIM[m];d++){
+      const we=isWeekendDoy(doy);
+      const dayE=we?xWe:xWd, shp=we?wkndP:wkdP, shpSum=we?wkndSum:wkdSum;
+      for(let h=0;h<24;h++){load[idx]=dayE*(shp[h]/shpSum);idx++;}
+      doy++;
+    }
   }
   // E-Auto: Stundenprofil je Strategie
   if(p&&p.evActive&&p.evKwh>0){
@@ -800,7 +848,7 @@ function buildProfiles(strings,moduleWp,region,cons,p){
 }
 
 function simulate(gen,load,cap,feedCap){
-  const eIn=BAT_EFF_IN,eOut=BAT_EFF_OUT,maxP=cap*BAT_C_RATE;
+  const eIn=Math.sqrt(.9),eOut=Math.sqrt(.9),maxP=cap*0.5;
   const fc=feedCap!=null?feedCap:Infinity;
   let soc=0,self=0,feed=0,grid=0,curtailed=0;
   for(let i=0;i<gen.length;i++){
@@ -843,39 +891,6 @@ function economics(sim,p,cap,gen,load,feedCap){
   }
   const sav1=sim.self*p.gridPrice+sim.feed*p.feedInTariff-opCost;
   return {inv,cf,pay,sav1,profit:cum};
-}
-
-// Empfohlene Speichergröße: größte Stufe, deren marginale kWh sich noch
-// innerhalb der EEG-Dauer rechnet. Genutzt von Screen- und Print-Render.
-function recommendSize(sweep,p){
-  let rec=0;
-  for(let i=1;i<sweep.length;i++){
-    const incCost=(sweep[i].cap-sweep[i-1].cap)*p.batteryCostPerKwh;
-    const incSave=sweep[i].sav1-sweep[i-1].sav1;
-    const incPay=incSave>0?incCost/incSave:Infinity;
-    if(incPay<=p.eegDuration)rec=sweep[i].cap;else break;
-  }
-  return rec;
-}
-
-// Heizkosten-Vergleich WP vs. bisherige Heizung (reine Zahlen, keine Darstellung).
-// Liefert null, wenn der Vergleich nicht aktiv ist. PV-Anteil via Marginal-Simulation
-// (erneute Simulation ohne WP-Last). Genutzt von Screen- und Print-Render.
-function heatCompare(p,strings,moduleWp,battery,feedCap,cur){
-  if(!(p.hpActive&&p.hpReplace&&p.hpKwh>0))return null;
-  const oldY1=p.hpOldUse*p.hpOldPrice;                 // Altkosten aus gemessenem Verbrauch (inkl. Kesselverluste)
-  const wpGridY1=p.hpKwh*p.gridPrice;                  // WP komplett aus dem Netz
-  const profNoWP=buildProfiles(strings,moduleWp,p.region,p.annualConsumption,{...p,hpActive:false});
-  const simNoWP=simulate(profNoWP.gen,profNoWP.load,battery,feedCap);
-  const dGrid=Math.max(0,cur.grid-simNoWP.grid);       // zusätzlicher Netzbezug durch WP
-  const dFeed=Math.max(0,simNoWP.feed-cur.feed);       // entgangene Einspeisung durch WP
-  const pvCovered=Math.max(0,p.hpKwh-dGrid);           // durch Solar/Speicher gedeckt
-  const wpPvY1=dGrid*p.gridPrice+dFeed*p.feedInTariff; // realer Mehrkosteneffekt der WP
-  const impliedEff=p.hpOldUse>0?p.hpHeat/p.hpOldUse*100:0;
-  let oldCum=0,wpGridCum=0,wpPvCum=0;
-  for(let y=1;y<=p.period;y++){const f=(1+p.priceInc/100)**(y-1);oldCum+=oldY1*f;wpGridCum+=wpGridY1*f;wpPvCum+=wpPvY1*f;}
-  return {oldY1,wpGridY1,dGrid,dFeed,pvCovered,wpPvY1,impliedEff,
-          diffY1:oldY1-wpPvY1,diffCum:oldCum-wpPvCum,oldCum,wpGridCum,wpPvCum,cheaper:oldY1>=wpPvY1};
 }
 
 /* ===================== Formatierung ===================== */
@@ -938,7 +953,7 @@ function lineChart(data,xKey,series,opts={}){
 }
 
 /* ===================== App-Logik ===================== */
-const NUM=["annualConsumption","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","opCost","evKwh","hpHeat","hpCop","hpOldPrice","hpOldUse"];
+const NUM=["annualConsumption","weekendExtra","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","opCost","evKwh","hpHeat","hpCop","hpOldPrice","hpOldUse"];
 let battery=8;
 let daySeason="Sommer";
 
@@ -953,6 +968,11 @@ function readParams(){
   const plzY=yieldFromPLZ(p.plz);
   p.plzResolved=plzY!=null;
   p.baseYield=plzY!=null?plzY:(REGION_YIELD[p.region]||1010);
+  // Lastprofile (Tages-/Jahresverlauf Haushalt)
+  p.loadDay=document.getElementById("loadDay").value;
+  p.loadSeason=document.getElementById("loadSeason").value;
+  p.weekendSplit=document.getElementById("weekendToggle").checked;
+  p.loadDayWe=document.getElementById("loadDayWe").value;
   // E-Auto
   p.evActive=document.getElementById("evToggle").checked;
   p.evStrategy=document.getElementById("evStrategy").value;
@@ -1045,10 +1065,16 @@ function render(){
     `Gesamt: <b class="mono">${fmt(p.kWp,2)} kWp</b> · ${fmt(totalYield)} kWh/a`+
     (p.kWp>0?` · <span class="info-wrap" tabindex="0">⌀ ${fmt(effYield)} kWh/kWp·a<span class="info-i" aria-hidden="true">i</span><span class="info-tip">${yieldTip}</span></span>`:"")+extraNote;
 
-  const sweep=SIZES.map(c=>{const sim=simulate(prof.gen,prof.load,c,p.limit70?p.kWp*EEG_FEED_CAP_FRAC:Infinity);return {...sim,...economics(sim,p,c)};});
+  const sweep=SIZES.map(c=>{const sim=simulate(prof.gen,prof.load,c,p.limit70?p.kWp*0.7:Infinity);return {...sim,...economics(sim,p,c)};});
 
   // Empfehlung
-  const rec=recommendSize(sweep,p);
+  let rec=0;
+  for(let i=1;i<sweep.length;i++){
+    const incCost=(sweep[i].cap-sweep[i-1].cap)*p.batteryCostPerKwh;
+    const incSave=sweep[i].sav1-sweep[i-1].sav1;
+    const incPay=incSave>0?incCost/incSave:Infinity;
+    if(incPay<=p.eegDuration)rec=sweep[i].cap;else break;
+  }
   document.getElementById("recVal").innerHTML=`${rec} <span style="font-size:20px">kWh</span>`;
   document.getElementById("recText").textContent=rec===0
     ?"Kein Speicher amortisiert sich hier innerhalb der EEG-Dauer – die PV-Anlage allein ist am wirtschaftlichsten."
@@ -1059,7 +1085,7 @@ function render(){
   sel.innerHTML=SIZES.map(s=>`<button data-b="${s}" class="${s===battery?"on":""}">${s} kWh</button>`).join("");
   sel.querySelectorAll("button").forEach(b=>b.onclick=()=>{battery=+b.dataset.b;render();});
 
-  const feedCap=p.limit70?p.kWp*EEG_FEED_CAP_FRAC:Infinity;
+  const feedCap=p.limit70?p.kWp*0.7:Infinity;
   const cur={...simulate(prof.gen,prof.load,battery,feedCap)};Object.assign(cur,economics(cur,p,battery,prof.gen,prof.load,feedCap));
 
   // KPIs
@@ -1136,20 +1162,36 @@ function render(){
 
   // Heizkosten-Vergleich: WP vs. bisherige Heizung
   const hpCard=document.getElementById("hpCompareCard");
-  const hc=heatCompare(p,strings,moduleWp,battery,feedCap,cur);
-  if(hc){
+  if(p.hpActive&&p.hpReplace&&p.hpKwh>0){
     const fuelName={gas:"Erdgas",oel:"Heizöl",pellets:"Pellets",fern:"Fernwärme",strom:"Strom-Direktheizung"}[p.hpOldFuel]||"Bisherige Heizung";
-    const effOk=hc.impliedEff>0&&hc.impliedEff<=100;
-    const effText=hc.impliedEff<=0?"":(effOk
-      ? `Dein Verbrauch entspricht einem Wirkungsgrad der alten Heizung von ≈ ${fmt(hc.impliedEff,0)} %. `
+    // Altkosten direkt aus gemessenem Verbrauch (Kesselverluste bereits enthalten)
+    const oldY1=p.hpOldUse*p.hpOldPrice;
+    // WP ohne PV: gesamter Strombedarf zum Netzpreis
+    const wpGridY1=p.hpKwh*p.gridPrice;
+    // WP mit PV-Eigenanteil: marginale Mehrbelastung (Netzbezug + entgangene Einspeisung)
+    const profNoWP=buildProfiles(strings,moduleWp,p.region,p.annualConsumption,{...p,hpActive:false});
+    const simNoWP=simulate(profNoWP.gen,profNoWP.load,battery,feedCap);
+    const dGrid=Math.max(0,cur.grid-simNoWP.grid);          // zusätzlicher Netzbezug durch WP
+    const dFeed=Math.max(0,simNoWP.feed-cur.feed);          // entgangene Einspeisung durch WP
+    const pvCovered=Math.max(0,p.hpKwh-dGrid);              // durch Solar/Speicher gedeckt
+    const wpPvY1=dGrid*p.gridPrice+dFeed*p.feedInTariff;    // realer Mehrkosteneffekt der WP
+    const impliedEff=p.hpOldUse>0?p.hpHeat/p.hpOldUse*100:0;
+    const effOk=impliedEff>0&&impliedEff<=100;
+    const effText=impliedEff<=0?"":(effOk
+      ? `Dein Verbrauch entspricht einem Wirkungsgrad der alten Heizung von ≈ ${fmt(impliedEff,0)} %. `
       : `<b style="color:var(--clay)">Hinweis: Der eingegebene Verbrauch liegt unter dem Heizwärmebedarf (${fmt(p.hpHeat)} kWh) – das ergäbe einen Wirkungsgrad über 100 %.</b> `);
+    const cheaper=oldY1>=wpPvY1;
+    const diffY1=oldY1-wpPvY1;
+    let oldCum=0,wpGridCum=0,wpPvCum=0;
+    for(let y=1;y<=p.period;y++){const f=(1+p.priceInc/100)**(y-1);oldCum+=oldY1*f;wpGridCum+=wpGridY1*f;wpPvCum+=wpPvY1*f;}
+    const diffCum=oldCum-wpPvCum;
     hpCard.style.display="block";
     document.getElementById("hpCompareBody").innerHTML=
-      `<div class="hpc-row"><span>${fuelName} <span style="color:var(--sub)">· ${fmt(p.hpOldUse)} kWh Brennstoff</span></span><b class="mono">${eur(hc.oldY1)}/a</b></div>`+
-      `<div class="hpc-row"><span>Wärmepumpe (nur Netzstrom) <span style="color:var(--sub)">· ${fmt(p.hpKwh)} kWh · COP ${fmt(p.hpCop,1)}</span></span><b class="mono">${eur(hc.wpGridY1)}/a</b></div>`+
-      `<div class="hpc-row"><span>Wärmepumpe mit PV-Eigenanteil <span style="color:var(--sub)">· ${fmt(hc.pvCovered)} kWh solar gedeckt</span></span><b class="mono" style="color:var(--leaf)">${eur(hc.wpPvY1)}/a</b></div>`+
-      `<div class="hpc-row hpc-diff"><span>${hc.cheaper?"WP mit PV spart":"WP mit PV kostet mehr"}</span><b class="mono" style="color:${hc.cheaper?"var(--leaf)":"var(--clay)"}">${eur(Math.abs(hc.diffY1))}/a</b></div>`+
-      `<div class="hpc-note">Über ${p.period} Jahre (gleiche Preissteigerung ${fmt(p.priceInc,1)} %/a angenommen): WP mit PV ${hc.diffCum>=0?"günstiger":"teurer"} um <b class="mono" style="color:${hc.diffCum>=0?"var(--leaf)":"var(--clay)"}">${eur(Math.abs(hc.diffCum))}</b>. PV-Anteil aus Marginalrechnung (Mehr-Netzbezug + entgangene Einspeisung). ${effText}Gas-/Strompreise können sich real unterschiedlich entwickeln.</div>`;
+      `<div class="hpc-row"><span>${fuelName} <span style="color:var(--sub)">· ${fmt(p.hpOldUse)} kWh Brennstoff</span></span><b class="mono">${eur(oldY1)}/a</b></div>`+
+      `<div class="hpc-row"><span>Wärmepumpe (nur Netzstrom) <span style="color:var(--sub)">· ${fmt(p.hpKwh)} kWh · COP ${fmt(p.hpCop,1)}</span></span><b class="mono">${eur(wpGridY1)}/a</b></div>`+
+      `<div class="hpc-row"><span>Wärmepumpe mit PV-Eigenanteil <span style="color:var(--sub)">· ${fmt(pvCovered)} kWh solar gedeckt</span></span><b class="mono" style="color:var(--leaf)">${eur(wpPvY1)}/a</b></div>`+
+      `<div class="hpc-row hpc-diff"><span>${cheaper?"WP mit PV spart":"WP mit PV kostet mehr"}</span><b class="mono" style="color:${cheaper?"var(--leaf)":"var(--clay)"}">${eur(Math.abs(diffY1))}/a</b></div>`+
+      `<div class="hpc-note">Über ${p.period} Jahre (gleiche Preissteigerung ${fmt(p.priceInc,1)} %/a angenommen): WP mit PV ${diffCum>=0?"günstiger":"teurer"} um <b class="mono" style="color:${diffCum>=0?"var(--leaf)":"var(--clay)"}">${eur(Math.abs(diffCum))}</b>. PV-Anteil aus Marginalrechnung (Mehr-Netzbezug + entgangene Einspeisung). ${effText}Gas-/Strompreise können sich real unterschiedlich entwickeln.</div>`;
   }else{hpCard.style.display="none";}
 
   // Monatsverlauf
@@ -1159,9 +1201,17 @@ function render(){
     [{key:"Erzeugung",color:C.sun,area:true},{key:"Verbrauch",color:C.sky,area:true}],
     {h:200,yfmt:v=>fmt(v),yunit:"kWh"});
 
-  // Tagesprofil je Saison (repräsentativer Tag, Monatsmitte) – gemeinsame Funktion mit dem Print-View
-  document.getElementById("dayTitle").textContent=DAY_TITLE[daySeason]+" · Speicherverlauf";
-  const day=buildDayProfile(prof,daySeason);
+  // Tagesprofil je Saison (repräsentativer Tag, Monatsmitte)
+  const SEASONS={"Frühling":[3,15],"Sommer":[5,15],"Herbst":[9,15],"Winter":[0,15]};
+  const DAYTITLE={"Frühling":"Frühlingstag","Sommer":"Sommertag","Herbst":"Herbsttag","Winter":"Wintertag"};
+  const [sm,sd]=SEASONS[daySeason]||SEASONS["Sommer"];
+  const start=repDayStart(sm,sd);
+  document.getElementById("dayTitle").textContent=DAYTITLE[daySeason]+" · Speicherverlauf";
+  const eIn=Math.sqrt(.9),eOut=Math.sqrt(.9),maxP=battery*0.5;let soc=battery*0.3;const day=[];
+  for(let h=0;h<24;h++){const g=prof.gen[start+h],l=prof.load[start+h],du=Math.min(g,l);let sur=g-du,def=l-du;
+    if(sur>0&&battery>0){const c=Math.min(sur,maxP,(battery-soc)/eIn);soc+=c*eIn;}
+    if(def>0&&battery>0){const dis=Math.min(def,maxP,soc*eOut);soc-=dis/eOut;}
+    day.push({h,Erzeugung:+g.toFixed(2),Verbrauch:+l.toFixed(2),Speicher:+soc.toFixed(2)});}
   document.getElementById("dayChart").innerHTML=lineChart(day,"h",
     [{key:"Erzeugung",color:C.sun},{key:"Verbrauch",color:C.sky},{key:"Speicher",color:C.leaf,dash:true}],
     {h:200,yfmt:v=>fmt(v,1),xfmt:v=>v+"h",yunit:"kWh"});
@@ -1251,14 +1301,15 @@ document.querySelectorAll("#seasonSel button").forEach(b=>b.addEventListener("cl
 }));
 
 /* ===================== Speichern / Laden ===================== */
-const SAVE_IDS=["region","plz","moduleWp","annualConsumption","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","opCost","batCap","batPrice","evKwh","evStrategy","hpHeat","hpCop","hpOldFuel","hpOldPrice","hpOldUse"];
+const SAVE_IDS=["region","plz","moduleWp","annualConsumption","loadDay","loadSeason","loadDayWe","weekendExtra","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","opCost","batCap","batPrice","evKwh","evStrategy","hpHeat","hpCop","hpOldFuel","hpOldPrice","hpOldUse"];
 function gatherState(){
   const fields={};
   SAVE_IDS.forEach(id=>{const el=document.getElementById(id);if(el)fields[id]=el.value;});
-  return {app:"pv-rechner",version:4,fields,strings,costItems,battery,
+  return {app:"pv-rechner",version:5,fields,strings,costItems,battery,
     evActive:document.getElementById("evToggle").checked,
     hpActive:document.getElementById("hpToggle").checked,
     hpReplace:document.getElementById("hpReplaceToggle").checked,
+    weekendActive:document.getElementById("weekendToggle").checked,
     limit70:document.getElementById("limit70Toggle").checked};
 }
 function downloadState(){
@@ -1279,6 +1330,7 @@ function applyState(state){
   if(typeof state.evActive==="boolean"){document.getElementById("evToggle").checked=state.evActive;document.getElementById("evSection").classList.toggle("open",state.evActive);}
   if(typeof state.hpActive==="boolean"){document.getElementById("hpToggle").checked=state.hpActive;document.getElementById("hpSection").classList.toggle("open",state.hpActive);}
   if(typeof state.hpReplace==="boolean"){document.getElementById("hpReplaceToggle").checked=state.hpReplace;document.getElementById("hpCompareSection").classList.toggle("open",state.hpReplace);}
+  if(typeof state.weekendActive==="boolean"){document.getElementById("weekendToggle").checked=state.weekendActive;document.getElementById("weekendSection").classList.toggle("open",state.weekendActive);document.getElementById("loadDayLabel").textContent=state.weekendActive?"Tagesprofil Werktag":"Tagesprofil Verbrauch";}
   if(typeof state.limit70==="boolean")document.getElementById("limit70Toggle").checked=state.limit70;
   renderStrings();renderCosts();render();
 }
@@ -1334,6 +1386,10 @@ document.getElementById("hpOldFuel").addEventListener("change",e=>{
   if(price!=null)document.getElementById("hpOldPrice").value=price;
   render();});
 document.getElementById("limit70Toggle").addEventListener("change",render);
+document.getElementById("weekendToggle").addEventListener("change",e=>{
+  document.getElementById("weekendSection").classList.toggle("open",e.target.checked);
+  document.getElementById("loadDayLabel").textContent=e.target.checked?"Tagesprofil Werktag":"Tagesprofil Verbrauch";
+  render();});
 
 /* ---- Erweiterte Einstellungen Akkordeon ---- */
 document.getElementById("advToggle").addEventListener("click",()=>{
@@ -1346,14 +1402,15 @@ document.getElementById("advToggle").addEventListener("click",()=>{
 /* ---- PDF / Drucken ---- */
 function prow(label,val){return `<div class="p-row"><span>${label}</span><span>${val}</span></div>`;}
 
-function buildDayProfile(prof,season){
-  const [sm,sd]=SEASON_DAY[season]||SEASON_DAY["Sommer"];
-  const start=(DIM.slice(0,sm).reduce((a,b)=>a+b,0)+(sd-1))*24;
-  const maxP=battery*BAT_C_RATE;let soc=battery*BAT_START_SOC;const pts=[];
+function buildDayProfile(prof,seasonMonth,seasonDay){
+  const SEASONS_MAP={"Frühling":[3,15],"Sommer":[5,15],"Herbst":[9,15],"Winter":[0,15]};
+  const [sm,sd]=SEASONS_MAP[seasonMonth]||[5,15];
+  const start=repDayStart(sm,sd);
+  const eIn=Math.sqrt(.9),eOut=Math.sqrt(.9),maxP=battery*0.5;let soc=battery*0.3;const pts=[];
   for(let h=0;h<24;h++){
     const g=prof.gen[start+h],l=prof.load[start+h],du=Math.min(g,l);let sur=g-du,def=l-du;
-    if(sur>0&&battery>0){const c=Math.min(sur,maxP,(battery-soc)/BAT_EFF_IN);soc+=c*BAT_EFF_IN;}
-    if(def>0&&battery>0){const dis=Math.min(def,maxP,soc*BAT_EFF_OUT);soc-=dis/BAT_EFF_OUT;}
+    if(sur>0&&battery>0){const c=Math.min(sur,maxP,(battery-soc)/eIn);soc+=c*eIn;}
+    if(def>0&&battery>0){const dis=Math.min(def,maxP,soc*eOut);soc-=dis/eOut;}
     pts.push({h,Erzeugung:+g.toFixed(2),Verbrauch:+l.toFixed(2),Speicher:+soc.toFixed(2)});
   }
   return pts;
@@ -1364,7 +1421,7 @@ function populatePrintView(){
   const moduleWp=parseFloat(document.getElementById("moduleWp").value)||0;
   p.kWp=strings.reduce((a,s)=>a+(parseFloat(s.modules)||0)*moduleWp/1000,0);
   const prof=buildProfiles(strings,moduleWp,p.region,p.annualConsumption,p);
-  const feedCap=p.limit70?p.kWp*EEG_FEED_CAP_FRAC:Infinity;
+  const feedCap=p.limit70?p.kWp*0.7:Infinity;
   const sweep=SIZES.map(c=>{const sim=simulate(prof.gen,prof.load,c,feedCap);return {...sim,...economics(sim,p,c)};});
   const cur={...simulate(prof.gen,prof.load,battery,feedCap)};Object.assign(cur,economics(cur,p,battery,prof.gen,prof.load,feedCap));
   const totalYield=strings.reduce((a,s)=>a+specificYield(p.baseYield,azResolve(s).f,parseFloat(s.tilt)||0)*((parseFloat(s.modules)||0)*moduleWp/1000),0);
@@ -1375,7 +1432,12 @@ function populatePrintView(){
   document.getElementById("printDate").textContent=`Erstellt am ${d.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit",year:"numeric"})}`;
 
   // Empfehlung
-  const rec=recommendSize(sweep,p);
+  let rec=0;
+  for(let i=1;i<sweep.length;i++){
+    const incCost=(sweep[i].cap-sweep[i-1].cap)*p.batteryCostPerKwh;
+    const incSave=sweep[i].sav1-sweep[i-1].sav1;
+    if(incSave>0&&incCost/incSave<=p.eegDuration)rec=sweep[i].cap;else break;
+  }
   document.getElementById("printRecVal").textContent=rec+" kWh";
   document.getElementById("printRecText").textContent=rec===0
     ?"Kein Speicher amortisiert sich innerhalb der EEG-Dauer."
@@ -1415,10 +1477,14 @@ function populatePrintView(){
 
   // Heizvergleich (Print): Marginal-PV-Anteil wie auf dem Bildschirm
   let hpCompareRow="";
-  const hcP=heatCompare(p,strings,moduleWp,battery,feedCap,cur);
-  if(hcP){
+  if(p.hpActive&&p.hpReplace&&p.hpKwh>0){
     const fuelShort={gas:"Gas",oel:"Öl",pellets:"Pellets",fern:"Fernw.",strom:"Strom"}[p.hpOldFuel]||"alt";
-    hpCompareRow=prow("Heizvergleich",`${fuelShort} ${eur(hcP.oldY1)}/a · WP m. PV ${eur(hcP.wpPvY1)}/a`);
+    const oldY1=p.hpOldUse*p.hpOldPrice;
+    const profNoWP=buildProfiles(strings,moduleWp,p.region,p.annualConsumption,{...p,hpActive:false});
+    const simNoWP=simulate(profNoWP.gen,profNoWP.load,battery,feedCap);
+    const dGrid=Math.max(0,cur.grid-simNoWP.grid),dFeed=Math.max(0,simNoWP.feed-cur.feed);
+    const wpPvY1=dGrid*p.gridPrice+dFeed*p.feedInTariff;
+    hpCompareRow=prow("Heizvergleich",`${fuelShort} ${eur(oldY1)}/a · WP m. PV ${eur(wpPvY1)}/a`);
   }
 
   // Tarif
