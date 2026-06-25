@@ -441,7 +441,9 @@
             <div class="field"><label>Speicher-Degradation (%/Jahr)</label><input id="batDegradation" type="number" step="0.1" value="2.0"></div>
             <div class="field"><label>WR-Wirkungsgrad (%)</label><input id="inverterEff" type="number" step="0.1" value="97"></div>
             <div class="field"><label>Betriebskosten (€/Jahr)</label><input id="opCost" type="number" step="10" value="150"></div>
+            <div class="field"><label>Systemverluste pauschal (%)</label><input id="sysLoss" type="number" step="1" value="0" placeholder="0"></div>
           </div>
+          <div class="note" style="margin-top:6px;">Pauschaler Ertragsabschlag für nicht einzeln modellierte Effekte (Verschattung, Temperatur, Leitungsverluste). Default 0, da der Basisertrag reale Anlagen abbildet. Typisch 2–5 % bei Teilverschattung oder langen DC-Strecken – auch zum Abgleich mit einer PVGIS-Standortsimulation.</div>
           <div class="toggle-row" style="margin-top:10px;">
             <label for="limit70Toggle">70%-Einspeisebegrenzung (§9 EEG)</label>
             <label class="toggle"><input type="checkbox" id="limit70Toggle"><span class="slider"></span></label>
@@ -505,7 +507,7 @@
 
   <p class="footnote">
     Schätzwerte auf Basis genormter Profile (BDEW-H0-ähnlich, Regionalerträge). Gut für die Entscheidung „Speicher ja/nein und wie groß", keine exakte Anlagenplanung.
-    Modellierte Verluste: WR-Wirkungsgrad, PV-Degradation, Speicher-Degradation (gewählte Größe), §9-EEG-Abregelung. Nicht modelliert: Verschattung, Leitungsverluste, temperaturabhängige Leistungsänderung.
+    Modellierte Verluste: WR-Wirkungsgrad, PV-Degradation, Speicher-Degradation (gewählte Größe), §9-EEG-Abregelung. Nicht einzeln modelliert: Verschattung, Leitungsverluste, temperaturabhängige Leistungsänderung – pauschal über „Systemverluste" (Erweiterte Einstellungen) korrigierbar.
   </p>
   </div><!-- /panel-calc -->
 
@@ -773,6 +775,8 @@ function buildProfiles(strings,moduleWp,region,cons,p){
   const shareSum=PV_SHARE.reduce((a,b)=>a+b,0);
   const gen=new Float64Array(8760),load=new Float64Array(8760);
   const invEff=(p&&p.inverterEff?p.inverterEff:97)/100;
+  const sysLoss=Math.max(-0.2,Math.min(0.5,((p&&p.sysLoss)||0)/100)); // pauschaler Ertragsabschlag (Verschattung/Temperatur/Leitung), -20..+50 % begrenzt
+  const yieldF=invEff*(1-sysLoss);
   // Erzeugung: Summe über alle Strings (je eigene Ausrichtung/Neigung)
   strings.forEach(st=>{
     const kWp=(parseFloat(st.modules)||0)*moduleWp/1000; if(kWp<=0)return;
@@ -783,7 +787,7 @@ function buildProfiles(strings,moduleWp,region,cons,p){
     let idx=0;
     for(let m=0;m<12;m++){
       const dg=yearGen*(PV_SHARE[m]/shareSum)/DIM[m];
-      for(let d=0;d<DIM[m];d++)for(let h=0;h<24;h++){gen[idx]+=dg*hw[m][h]*invEff;idx++;}
+      for(let d=0;d<DIM[m];d++)for(let h=0;h<24;h++){gen[idx]+=dg*hw[m][h]*yieldF;idx++;}
     }
   });
   // Haushaltsverbrauch – wählbares Tages- und Jahresprofil, optional Werktag/Wochenende getrennt
@@ -953,7 +957,7 @@ function lineChart(data,xKey,series,opts={}){
 }
 
 /* ===================== App-Logik ===================== */
-const NUM=["annualConsumption","weekendExtra","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","opCost","evKwh","hpHeat","hpCop","hpOldPrice","hpOldUse"];
+const NUM=["annualConsumption","weekendExtra","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","sysLoss","opCost","evKwh","hpHeat","hpCop","hpOldPrice","hpOldUse"];
 let battery=8;
 let daySeason="Sommer";
 
@@ -1301,7 +1305,7 @@ document.querySelectorAll("#seasonSel button").forEach(b=>b.addEventListener("cl
 }));
 
 /* ===================== Speichern / Laden ===================== */
-const SAVE_IDS=["region","plz","moduleWp","annualConsumption","loadDay","loadSeason","loadDayWe","weekendExtra","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","opCost","batCap","batPrice","evKwh","evStrategy","hpHeat","hpCop","hpOldFuel","hpOldPrice","hpOldUse"];
+const SAVE_IDS=["region","plz","moduleWp","annualConsumption","loadDay","loadSeason","loadDayWe","weekendExtra","gridPrice","feedInTariff","priceInc","costPerKwp","batteryCostPerKwh","foerderung","co2Factor","period","eegDuration","restWert","degradation","batDegradation","inverterEff","sysLoss","opCost","batCap","batPrice","evKwh","evStrategy","hpHeat","hpCop","hpOldFuel","hpOldPrice","hpOldUse"];
 function gatherState(){
   const fields={};
   SAVE_IDS.forEach(id=>{const el=document.getElementById(id);if(el)fields[id]=el.value;});
@@ -1509,6 +1513,7 @@ function populatePrintView(){
     prow("PV-Degradation",fmt(p.degradation,1)+" %/Jahr")+
     (Math.abs(p.batDegradation-2.0)>0.001?prow("Speicher-Degradation",fmt(p.batDegradation,1)+" %/Jahr"):"")+
     (Math.abs(p.inverterEff-97)>0.001?prow("WR-Wirkungsgrad",fmt(p.inverterEff,1)+" %"):"")+
+    (Math.abs(p.sysLoss||0)>0.001?prow("Systemverluste pauschal",fmt(p.sysLoss,1)+" %"):"")+
     (Math.abs(p.opCost-150)>0.001?prow("Betriebskosten",eur(p.opCost)+" /Jahr"):"")+
     (p.co2Factor>0?prow("CO₂-Einsparung",fmt(co2)+" kg/a"):"");
 
